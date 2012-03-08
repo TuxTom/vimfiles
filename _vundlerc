@@ -1,0 +1,61 @@
+" vim: set foldmethod=marker foldlevel=0 filetype=vim:
+
+set nocompatible
+filetype off
+
+execute "set rtp+=" . g:tools_basedir . '\vim\bundles\vundle'
+call vundle#rc(g:tools_basedir . '\vim\bundles')
+
+Bundle 'gmarik/vundle'
+
+Bundle 'CmdlineComplete'
+Bundle 'help.vim'
+Bundle 'matchit.zip'
+Bundle 'tpope/vim-surround'
+Bundle 'tpope/vim-repeat'
+Bundle 'tpope/vim-fugitive'
+Bundle 'gregsexton/gitv'
+Bundle 'vcscommand.vim'
+Bundle 'AnsiEsc.vim'
+Bundle 'thinca/vim-visualstar'
+Bundle 'nathanaelkane/vim-indent-guides'
+
+Bundle 'Lokaltog/vim-powerline'
+
+Bundle 'Shougo/neocomplcache'
+Bundle 'drmingdrmer/xptemplate-dist'
+
+Bundle 'scrooloose/nerdtree'
+
+Bundle 'scrooloose/nerdcommenter'
+
+" Bundle 'scrooloose/syntastic'
+
+Bundle 'grep.vim'
+
+Bundle 'vimwiki'
+Bundle 'calendar.vim--Matsumoto'
+
+Bundle 'taglist.vim'
+
+Bundle 'Raimondi/delimitMate'
+
+Bundle 'scratch'
+
+" if !exists('g:EclimStartOnStartup')
+  " command! -nargs=0 EclimPowerOn :call scriptmanager#Activate(["eclim"])|delcommand EclimPowerOn
+" else
+  " Bundle ''
+" endif
+
+" Bundle 'utl.vim'
+" Bundle 'chrisbra/NrrwRgn'
+" Bundle 'vim-orgmode'
+
+Bundle 'wincent/Command-T'
+
+Bundle 'xml.vim'
+
+Bundle 'altercation/vim-colors-solarized'
+
+filetype plugin indent on
