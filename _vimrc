@@ -70,23 +70,26 @@ nnoremap <Leader><Leader>e :e <C-r>*<CR>
 nnoremap <Leader><Leader>d :diffsplit <C-r>*<CR>
 
 if(has("win32"))
-  " if( $COMPUTERNAME == "ER00701P" )
-    " let g:tools_basedir = 'E:\Tools'
-  " elseif( $COMPUTERNAME == "ER01541N" )
-    let g:tools_basedir = 'C:\Tools'
-  " endif
+  if(exists("$TOOLS_DIR"))
+    let g:tools_basedir = $TOOLS_DIR
+  else
+    echoerr "Environment variable TOOLS_DIR not set, many things will not work!"
+  endif
 
-  " Always write "_vimrc" and "_vundlerc" to both locations, "~" and "$VIM/vimfiles" {{{
+  " Always write "_vimrc", "_gvimrc" and "_vundlerc" to all relevant locations, "~", "$VIM/vimfiles" and "$HOMEDRIVE/$HOMEDIR" (if different from "~") {{{
   augroup Vimrc_BackupVimFile
     au!
     au BufWritePost _vimrc call BackupVimFile()
+    au BufWritePost _gvimrc call BackupVimFile()
     au BufWritePost _vundlerc call BackupVimFile()
   augroup end
 
   fun! BackupVimFile() "{{{
-    
     if(fnamemodify(expand("%:h"), ":p") == fnamemodify(expand("~"), ":p"))
       call DoWriteCopy(expand("$VIM/vimfiles"))
+      if(exists("$HOMEDRIVE") && exists("$HOMEPATH") && fnamemodify(expand("$HOMEDRIVE/$HOMEPATH"), ":p") != fnamemodify(expand("~"), ":p"))
+        call DoWriteCopy(expand("$HOMEDRIVE/$HOMEPATH"))
+      endif
     endif
   endfunction "}}}
 
@@ -104,12 +107,10 @@ if(has("win32"))
   endfunction "}}}
   " }}}
 
-  " Load bundle data for Vundle
-  exec "source " . expand("<sfile>:p:h") . "/_vundlerc"
-
-  " Setup curl {{{
-  let g:netrw_http_cmd=g:tools_basedir . '\Curl\curl.exe -o'
-  " }}}"
+  if(exists('g:tools_basedir'))
+    " Load bundle data for Vundle
+    exec "source " . expand("<sfile>:p:h") . "/_vundlerc"
+  endif
 
   " Use standard Windows clipboard for copying/yanking {{{
   set clipboard=unnamed
@@ -122,20 +123,6 @@ if(has("win32"))
 
   " Maximize GUI on open {{{
   au GUIEnter * simalt ~x
-  " }}}
-
-  " Generalize path to ctags.exe {{{
-  let s:ctags_cmd=g:tools_basedir . '\Ctags\ctags.exe'
-  " }}}
-
-  " Generalize path to xmllint.exe {{{
-  let s:xmllint_cmd=g:tools_basedir . '\libxml\bin\xmllint.exe'
-
-  autocmd FileType xml exec "command! -buffer XMLLint :%!" . s:xmllint_cmd . " --format -"
-  autocmd FileType arxml exec "command! -buffer XMLLint :%!" . s:xmllint_cmd . " --format -"
-  autocmd FileType docbk exec "command! -buffer XMLLint :%!" . s:xmllint_cmd . " --format -"
-  autocmd FileType reqmgr exec "command! -buffer XMLLint :%!" . s:xmllint_cmd . " --format -"
-  autocmd FileType xsd exec "command! -buffer XMLLint :%!" . s:xmllint_cmd . " --format -"
   " }}}
 
   " Settings for 'showmarks' {{{
@@ -154,7 +141,6 @@ if(has("win32"))
   let g:neocomplcache_enable_camel_case_completion=1
   let g:neocomplcache_enable_underbar_completion=1
   let g:neocomplcache_temporary_dir=$TEMP . '\NeoComplCache'
-  let g:neocomplcache_ctags_program=s:ctags_cmd
   let g:neocomplcache_min_keyword_length=2
   let g:neocomplcache_plugin_disable={'snippets_complete' : 1}
   let g:neocomplcache_min_syntax_length = 3
@@ -202,16 +188,6 @@ if(has("win32"))
   inoremap <Plug>Tab                                    <Tab>
   snoremap <Plug>Tab                                    <Tab>
 
-  " Needed for custom jira-snippets
-  let g:jira_server = 'https://issue.ebgroup.elektrobit.com'
-  let g:jira_cmdline_app = '"' . g:tools_basedir . '\atlassian-cli-2.5.0\jira.bat"'
-  let g:jira_username = 'asctest'
-  let g:jira_password = '!Test2Asc'
-
-  " let g:UltiSnipsExpandTrigger = "<Tab>"
-  " let g:UltiSnipsJumpForwardTrigger = "<Tab>"
-  " let g:UltiSnipsJumpBackwardTrigger = "<S-Tab>"
-
   " }}}
 
   " NERDTree {{{
@@ -242,18 +218,6 @@ if(has("win32"))
 
   " }}}
 
-  " Grep {{{
-  let Grep_Path=g:tools_basedir . '\GNU\bin\grep.exe'
-  let Fgrep_Path=g:tools_basedir . '\GNU\bin\fgrep.exe'
-  let Egrep_Path=g:tools_basedir . '\GNU\bin\egrep.exe'
-  let Agrep_Path=g:tools_basedir . '\GNU\bin\AGREPW32.exe'
-  let Grep_Find_Path=g:tools_basedir . '\GNU\bin\find.exe'
-  let Grep_Xargs_Path=g:tools_basedir . '\GNU\bin\xargs.exe'
-  let Grep_Find_Use_Xargs=0
-
-  set grepprg=E:\\Tools\\GNU\\bin\\grep.exe\ -nH
-  " }}}
-
   " Vimwiki {{{
   let wiki={}
   let wiki.path='~/vimwiki/'
@@ -273,12 +237,6 @@ if(has("win32"))
   let g:vimwiki_fold_lists=1
   let g:vimwiki_conceallevel=2
   let g:vimwiki_table_auto_fmt=0
-
-  " Avoid the 'Hit ENTER to continue' prompt when following a web link
-  function! VimwikiWeblinkHandler(weblink)
-    let browser='C:\Program Files\Firefox 4.0\firefox.exe'
-    execute 'silent !start "'.browser.'" ' . a:weblink
-  endfunction
 
   function! ToggleJournalAndCal() "{{{
     let winnr_cal = bufwinnr('__Calendar')
@@ -414,21 +372,6 @@ if(has("win32"))
 
   " }}}
 
-  " Taglist {{{
-  let g:Tlist_Ctags_Cmd=s:ctags_cmd
-  let g:tlist_ant_settings='ant_tlist;p:Project;t:Target;r:Property;d:Task;e:Extension-Point'
-  let g:tlist_jproperties_settings='jproperties;r:Property'
-  let g:Tlist_File_Fold_Auto_Close=1
-  let Tlist_GainFocus_On_ToggleOpen=0
-  let Tlist_Enable_Fold_Column=0
-  let Tlist_Use_Right_Window=1
-  let Tlist_WinWidth=35
-  let Tlist_Sort_Type = "name"
-
-  nmap <Leader>T :TlistToggle<CR>
-
-  " }}}
-
   " delimitMate {{{
   let g:delimitMate_expand_cr=0
   let g:delimitMate_expand_space=0
@@ -457,10 +400,12 @@ if(has("win32"))
   " }}}
 
   " }}}
-
-  " Eclim (disabled) {{{
-  " let g:EclimProjectTreeAutoOpen=1
-  " let g:EclimShowErrors=1
+  
+  " Powerline {{{
+  let g:Powerline_stl_path_style="short"
+  " let g:Powerline_symbols_override={'BRANCH': '‡', 'LINE': 'L', 'RO': '‼',}
+  " let g:Powerline_dividers_override = ['', '►', '', '◄']
+  " let g:Powerline_symbols="fancy"
   " }}}
 
   " netrw {{{
@@ -476,6 +421,74 @@ if(has("win32"))
   let g:CommandTMatchWindowReverse = 1
   let g:CommandTMaxCachedDirectories = 10
 
+  " }}}
+
+  " colorschemes {{{
+  " careful, self-destroying mapping... ;-). This is required as the autoload
+  " file containing the :ToggleBG command is not sourced otherwise
+  nmap <F5> :nunmap <F5><CR>:DoToggleBG<CR>
+  command! -nargs=0 DoToggleBG :call togglebg#map("<F5>")|delcommand DoToggleBG|ToggleBG
+
+  " }}}
+
+  if(exists('g:tools_basedir'))
+    " Setup curl {{{
+    let g:netrw_http_cmd=g:tools_basedir . '\Curl\curl.exe -o'
+    " }}}"
+
+    " Generalize path to ctags.exe {{{
+    let s:ctags_cmd=g:tools_basedir . '\Ctags\ctags.exe'
+    " }}}
+
+    " Generalize path to xmllint.exe {{{
+    let s:xmllint_cmd=g:tools_basedir . '\libxml\bin\xmllint.exe'
+
+    autocmd FileType xml exec "command! -buffer XMLLint :%!" . s:xmllint_cmd . " --format -"
+    autocmd FileType arxml exec "command! -buffer XMLLint :%!" . s:xmllint_cmd . " --format -"
+    autocmd FileType docbk exec "command! -buffer XMLLint :%!" . s:xmllint_cmd . " --format -"
+    autocmd FileType reqmgr exec "command! -buffer XMLLint :%!" . s:xmllint_cmd . " --format -"
+    autocmd FileType xsd exec "command! -buffer XMLLint :%!" . s:xmllint_cmd . " --format -"
+    " }}}
+
+    " Needed for Tags completion with Neocomplcache and custom jira-snippets with XPTemplate {{{
+    let g:neocomplcache_ctags_program=s:ctags_cmd
+
+    let g:jira_server = 'https://issue.ebgroup.elektrobit.com'
+    let g:jira_cmdline_app = '"' . g:tools_basedir . '\atlassian-cli-2.5.0\jira.bat"'
+    let g:jira_username = 'asctest'
+    let g:jira_password = '!Test2Asc'
+    " }}}
+
+    " Grep {{{
+    let Grep_Path=g:tools_basedir . '\GNU\bin\grep.exe'
+    let Fgrep_Path=g:tools_basedir . '\GNU\bin\fgrep.exe'
+    let Egrep_Path=g:tools_basedir . '\GNU\bin\egrep.exe'
+    let Agrep_Path=g:tools_basedir . '\GNU\bin\AGREPW32.exe'
+    let Grep_Find_Path=g:tools_basedir . '\GNU\bin\find.exe'
+    let Grep_Xargs_Path=g:tools_basedir . '\GNU\bin\xargs.exe'
+    let Grep_Find_Use_Xargs=0
+
+    execute 'set grepprg=' . g:tools_basedir . '\\GNU\\bin\\grep.exe\ -nH'
+    " }}}
+
+    " Taglist {{{
+    let g:Tlist_Ctags_Cmd=s:ctags_cmd
+    let g:tlist_ant_settings='ant_tlist;p:Project;t:Target;r:Property;d:Task;e:Extension-Point'
+    let g:tlist_jproperties_settings='jproperties;r:Property'
+    let g:Tlist_File_Fold_Auto_Close=1
+    let Tlist_GainFocus_On_ToggleOpen=0
+    let Tlist_Enable_Fold_Column=0
+    let Tlist_Use_Right_Window=1
+    let Tlist_WinWidth=35
+    let Tlist_Sort_Type = "name"
+
+    nmap <Leader>T :TlistToggle<CR>
+    " }}}
+  endif
+
+  " Eclim (disabled) {{{
+  " let g:EclimProjectTreeAutoOpen=1
+  " let g:EclimShowErrors=1
   " }}}
 
   " Conque_Shell (disabled) {{{
@@ -510,18 +523,6 @@ if(has("win32"))
   " augroup END
 
   " nmap <Leader>M :TMiniBufExplorer<CR>
-
-  " }}}
-
-  " xml {{{
-
-  " }}}
-
-  " colorschemes {{{
-  " careful, self-destroying mapping... ;-). This is required as the autoload
-  " file containing the :ToggleBG command is not sourced otherwise
-  nmap <F5> :nunmap <F5><CR>:DoToggleBG<CR>
-  command! -nargs=0 DoToggleBG :call togglebg#map("<F5>")|delcommand DoToggleBG|ToggleBG
 
   " }}}
 
@@ -576,13 +577,6 @@ if(has("win32"))
 
   " }}}
 
-  
-  " Powerline {{{
-  let g:Powerline_stl_path_style="short"
-  " let g:Powerline_symbols_override={'BRANCH': '‡', 'LINE': 'L', 'RO': '‼',}
-  " let g:Powerline_dividers_override = ['', '►', '', '◄']
-  " let g:Powerline_symbols="fancy"
-  " }}}
 endif
 
 " Highlight word under cursor in whole file by pressing <Leader>hh {{{
@@ -685,15 +679,16 @@ let g:xml_syntax_folding = 1
 " }}}
 
 if(has("gui_running"))
-  set background=light
-  colorscheme solarized
-
   set cursorline
 else
-  colorscheme default
   set nocursorline
 endif
 
+set background=light
+colorscheme solarized
 
 filetype plugin indent on
+autocmd Filetype * if &omnifunc == "" |
+                 \   setlocal omnifunc=syntaxcomplete#Complete |
+                 \ endif
 syntax on

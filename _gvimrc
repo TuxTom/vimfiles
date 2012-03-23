@@ -1,0 +1,4 @@
+set guifont=Consolas:h8:cANSI
+set guicursor=a:blinkon0-block
+set guioptions=eM
+set langmenu=en

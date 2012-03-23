@@ -38,6 +38,8 @@ Bundle 'calendar.vim--Matsumoto'
 
 Bundle 'taglist.vim'
 
+Bundle 'confluencewiki.vim'
+
 Bundle 'Raimondi/delimitMate'
 
 Bundle 'scratch'
