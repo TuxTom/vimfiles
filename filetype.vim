@@ -10,6 +10,7 @@ augroup filetypedetect
   au! BufRead,BufNewFile *.ddl      set filetype=sql
   au! BufRead,BufNewFile *.jet      set filetype=jet
   au! BufRead,BufNewFile *.xrl      set filetype=xrl
+  au! BufRead,BufNewFile *.cwiki    set filetype=confluencewiki
 augroup END
 
 func! s:CustomFTxml()
