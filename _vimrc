@@ -679,13 +679,15 @@ let g:xml_syntax_folding = 1
 " }}}
 
 if(has("gui_running"))
+  set background=dark
+  colorscheme solarized
+
   set cursorline
 else
+  colorscheme default
   set nocursorline
 endif
 
-set background=light
-colorscheme solarized
 
 filetype plugin indent on
 autocmd Filetype * if &omnifunc == "" |

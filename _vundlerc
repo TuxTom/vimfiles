@@ -60,4 +60,6 @@ Bundle 'xml.vim'
 
 Bundle 'altercation/vim-colors-solarized'
 
+" Bundle 'Twinside/vim-codeoverview'
+
 filetype plugin indent on

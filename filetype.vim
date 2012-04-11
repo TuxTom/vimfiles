@@ -33,6 +33,10 @@ func! s:CustomFTxml()
       set filetype=xrl
       return
     endif
+    if line =~ '^\s*<sect\d'
+      set filetype=docbk
+      return
+    endif
     let n += 1
   endwhile
 endfunction
