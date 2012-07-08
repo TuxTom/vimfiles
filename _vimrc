@@ -36,7 +36,7 @@ set scrolloff=3
 set shiftwidth=2
 set shortmess=filmnrxoOtTW
 set showbreak=>\ 
-set showtabline=1
+set showtabline=2
 set smartindent
 set smarttab
 set splitbelow
@@ -117,6 +117,10 @@ if(has("win32"))
   " }}}
 
   " Don't clutter working directory with swap or undo files... {{{
+  " if( !isdirectory( expand( "$TEMP/vim" ) ) )
+    " Try to create directory, if it does not exist
+    " silent! mkdir( expand( "$TEMP/vim" ), "p" )
+  " endif
   set directory=$TEMP/vim//,$TMP/vim//,.
   set undodir=$TEMP/vim//,$TMP/vim//,.
   " }}}
@@ -142,7 +146,6 @@ if(has("win32"))
   let g:neocomplcache_enable_underbar_completion=1
   let g:neocomplcache_temporary_dir=$TEMP . '\NeoComplCache'
   let g:neocomplcache_min_keyword_length=2
-  let g:neocomplcache_plugin_disable={'snippets_complete' : 1}
   let g:neocomplcache_min_syntax_length = 3
 
   if !exists('g:neocomplcache_keyword_patterns')
@@ -159,6 +162,10 @@ if(has("win32"))
   autocmd FileType arxml setlocal omnifunc=xmlcomplete#CompleteTags 
   autocmd FileType docbk setlocal omnifunc=xmlcomplete#CompleteTags 
   autocmd FileType reqmgr setlocal omnifunc=xmlcomplete#CompleteTags 
+
+  " textwidth
+  autocmd FileType docbk setlocal textwidth=120
+  autocmd FileType reqmgr setlocal textwidth=120
 
   " If completion menu visible complete common string, otherwise start completion
   imap <silent><expr><C-Space>     pumvisible() ? "\<Plug>completeCommonString" : "\<C-x>\<C-u>\<C-p>"
@@ -403,6 +410,8 @@ if(has("win32"))
   
   " Powerline {{{
   let g:Powerline_stl_path_style="short"
+  " let g:Powerline_theme="skwp"
+  " let g:Powerline_colorscheme="skwp"
   " let g:Powerline_symbols_override={'BRANCH': '‡', 'LINE': 'L', 'RO': '‼',}
   " let g:Powerline_dividers_override = ['', '►', '', '◄']
   " let g:Powerline_symbols="fancy"
@@ -679,15 +688,13 @@ let g:xml_syntax_folding = 1
 " }}}
 
 if(has("gui_running"))
-  set background=dark
-  colorscheme solarized
-
   set cursorline
 else
-  colorscheme default
   set nocursorline
 endif
 
+set background=dark
+colorscheme solarized
 
 filetype plugin indent on
 autocmd Filetype * if &omnifunc == "" |
