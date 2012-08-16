@@ -4,7 +4,7 @@ let s:f = g:XPTfuncs()
 
 XPTinclude
       \ _common/common
-
+      \ _common/functions
 
 XPTvar $CURSOR_PH 
 
@@ -36,26 +36,6 @@ fun! s:f.vimwikiTodoItemIfNoneYet()
   return ""
 endfunction
 
-fun! s:f.vimwikiGetJiraSummary(queue, id)
-  if a:queue == "" || a:id == ""
-    return
-  endif
-
-  let result = system( g:jira_cmdline_app . " -s " . g:jira_server . " -u " . g:jira_username . " -p " . g:jira_password . " -a getFieldValue --field Summary --issue " . a:queue . "-" . a:id )
-  if v:shell_error
-    return
-  endif
-
-  " split into lines
-  let lines = split( result, '\n' )
-
-  " remove the first line "Issue xxx has field 'Summary' with value"
-  if len( lines ) > 1
-    call remove( lines, 0 )
-    return substitute( join( lines, "\n" ), '\s\+$', '', '' )
-  endif
-endfunction
-
 " fun! s:f.getRelPath(target)
   " let basepath = expand('%:p:h')
   " let result = ""
@@ -79,12 +59,12 @@ endfunction
 XPT jira " $JIRA_ADDR...
 XSET queue|pre=TRESOS
 XSET queue|post=UpperCase( V() )
-XSET summary=vimwikiGetJiraSummary( R( 'queue' ), R( 'id' ) )
+XSET summary=getJiraSummary( R( 'queue' ), R( 'id' ) )
 `$JIRA_ADDR^`queue^-`id^ - `summary^
 ..XPT
 
 XPT jira_ticket hidden " Echo($JIRA_ADDR . UpperCase($_xSnipName) . "-...")
-XSET summary=vimwikiGetJiraSummary( UpperCase(_xSnipName()), R( 'id' ) )
+XSET summary=getJiraSummary( UpperCase(_xSnipName()), R( 'id' ) )
 `$JIRA_ADDR^`UpperCase(_xSnipName())^-`id^ - `summary^
 ..XPT
 

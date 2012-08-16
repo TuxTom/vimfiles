@@ -117,10 +117,10 @@ if(has("win32"))
   " }}}
 
   " Don't clutter working directory with swap or undo files... {{{
-  " if( !isdirectory( expand( "$TEMP/vim" ) ) )
+  if( !isdirectory( expand( "$TEMP/vim" ) ) )
     " Try to create directory, if it does not exist
-    " silent! mkdir( expand( "$TEMP/vim" ), "p" )
-  " endif
+    silent! call mkdir( expand( "$TEMP/vim" ), "p" )
+  endif
   set directory=$TEMP/vim//,$TMP/vim//,.
   set undodir=$TEMP/vim//,$TMP/vim//,.
   " }}}
@@ -693,7 +693,7 @@ else
   set nocursorline
 endif
 
-set background=dark
+set background=light
 colorscheme solarized
 
 filetype plugin indent on
