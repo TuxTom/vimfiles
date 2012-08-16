@@ -74,7 +74,7 @@ function! eclim#lang#CodeComplete(command, findstart, base, ...)
 
     let completions = []
     let results = eclim#ExecuteEclim(command)
-    if type(results) != 3
+    if type(results) != g:LIST_TYPE
       return
     endif
 
@@ -171,15 +171,16 @@ function! eclim#lang#Search(command, singleResultAction, argline)
 
   let port = eclim#client#nailgun#GetNgPort(workspace)
   let results =  eclim#ExecuteEclim(search_cmd, port)
-  if type(results) != 3
+  if type(results) != g:LIST_TYPE
     return
   endif
 
   if !empty(results)
     call eclim#util#SetLocationList(eclim#util#ParseLocationEntries(results))
+    let locs = getloclist(0)
     " if only one result and it's for the current file, just jump to it.
     " note: on windows the expand result must be escaped
-    if len(results) == 1 && results[0].filename =~ escape(expand('%:p'), '\') . '|'
+    if len(results) == 1 && locs[0].bufnr == bufnr('%')
       if results[0].line != 1 && results[0].column != 1
         lfirst
       endif
@@ -240,10 +241,10 @@ function! eclim#lang#UpdateSrcFile(lang, validate)
   endif
 endfunction " }}}
 
-" Validate(type, on_save) {{{
+" Validate(type, on_save, [filter]) {{{
 " Validates the current file. Used by languages which are not validated via
 " UpdateSrcFile (pretty much all the xml dialects and wst langs).
-function! eclim#lang#Validate(type, on_save)
+function! eclim#lang#Validate(type, on_save, ...)
   if eclim#util#WillWrittenBufferClose()
     return
   endif
@@ -263,6 +264,9 @@ function! eclim#lang#Validate(type, on_save)
   if type(result) == g:LIST_TYPE && len(result) > 0
     let errors = eclim#util#ParseLocationEntries(
       \ result, g:EclimValidateSortResults)
+    if a:0
+      let errors = function(a:1)(errors)
+    endif
     call eclim#util#SetLocationList(errors)
   else
     call eclim#util#ClearLocationList()
@@ -288,7 +292,10 @@ function! eclim#lang#SilentUpdate(...)
           let file = fnamemodify(file, ':h') . '/' . prefix . fnamemodify(file, ':t')
           let tempfile = expand('%:p:h') . '/' . prefix . expand('%:t')
           if a:0 < 2 || a:2
+            let savepatchmode = &patchmode
+            set patchmode=
             exec 'silent noautocmd write! ' . escape(tempfile, ' ')
+            let &patchmode = savepatchmode
           endif
         endif
       else

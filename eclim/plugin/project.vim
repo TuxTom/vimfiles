@@ -36,7 +36,7 @@ endif
 
 let g:EclimProjectTreeTitle = 'ProjectTree_'
 
-if !exists('g:EclimProjectTreeAutoOpen')
+if !exists('g:EclimProjectTreeAutoOpen') || exists('g:vimplugin_running')
   let g:EclimProjectTreeAutoOpen = 0
 endif
 
@@ -57,8 +57,7 @@ endif
 
 " w/ external vim refresh is optional, w/ embedded gvim it is mandatory
 " disabling at all though is discouraged.
-if g:EclimProjectRefreshFiles ||
-\ (has('netbeans_enabled') && exists('g:vimplugin_running'))
+if g:EclimProjectRefreshFiles || exists('g:vimplugin_running')
   augroup eclim_refresh_files
     autocmd!
     autocmd BufWritePre * call eclim#project#util#RefreshFileBootstrap()
@@ -157,6 +156,7 @@ if !exists(":ProjectTree")
   command -nargs=*
     \ -complete=customlist,eclim#project#util#CommandCompleteProject
     \ ProjectTree :call eclim#project#tree#ProjectTree(<f-args>)
+  command -nargs=0 ProjectTreeToggle :call eclim#project#tree#ProjectTreeToggle()
   command -nargs=0 ProjectsTree
     \ :call eclim#project#tree#ProjectTree(eclim#project#util#GetProjectNames())
   command -nargs=1

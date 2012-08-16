@@ -116,14 +116,14 @@ endif
 
 if !exists("g:EclimHome")
   " set at build/install time.
-  let g:EclimHome = 'C:/Tools/eclipse/3.7/plugins/org.eclim_1.7.3'
+  let g:EclimHome = 'C:\Tools\eclipse\4.2/plugins/org.eclim_2.2.0'
   if has('win32unix')
     let g:EclimHome = eclim#cygwin#CygwinPath(g:EclimHome)
   endif
 endif
 if !exists("g:EclimEclipseHome")
   " set at build/install time.
-  let g:EclimEclipseHome = 'C:/Tools/eclipse/3.7'
+  let g:EclimEclipseHome = 'C:\Tools\eclipse\4.2'
   if has('win32unix')
     let g:EclimEclipseHome = eclim#cygwin#CygwinPath(g:EclimEclipseHome)
   endif
@@ -139,7 +139,7 @@ if !exists("g:EclimTemplatesDisabled")
 endif
 
 if !exists('g:EclimLargeFileEnabled')
-  let g:EclimLargeFileEnabled = 1
+  let g:EclimLargeFileEnabled = 0
 endif
 if !exists('g:EclimLargeFileSize')
   let g:EclimLargeFileSize = 5
