@@ -28,7 +28,7 @@ set laststatus=2
 set linebreak
 set linespace=0
 set nocscopetag
-set nohlsearch
+set hlsearch
 set noignorecase
 set number
 set numberwidth=4
@@ -55,6 +55,14 @@ let maplocalleader="\\"
 " automatically open/close the quickfix/location window {{{
 autocmd QuickFixCmdPost [^l]* nested cwindow
 autocmd QuickFixCmdPost    l* nested lwindow
+" }}}
+
+" disable "Ex" mode on Q {{{
+nnoremap Q <nop>
+" }}}
+
+" disable search highlighting on <Leader>/ {{{
+nnoremap <silent> <Leader>/ :nohlsearch<CR>
 " }}}
 
 " Vim7.3 specific settings {{{
