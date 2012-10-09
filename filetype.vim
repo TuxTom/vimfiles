@@ -25,6 +25,10 @@ func! s:CustomFTxml()
       set filetype=reqmgr
       return
     endif
+    if line =~ '^\s*<specobjects'
+      set filetype=reqm2
+      return
+    endif
     if line =~ '^\s*<AUTOSAR'
       set filetype=arxml
       return
