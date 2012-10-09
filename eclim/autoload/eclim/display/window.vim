@@ -118,6 +118,7 @@ function! eclim#display#window#VerticalToolWindowOpen(name, weight, ...)
   let name = bufnum == -1 ? a:name : '+buffer' . bufnum
   silent call eclim#util#ExecWithoutAutocmds(wincmd . ' split ' . name)
 
+  doautocmd BufWinEnter
   setlocal winfixwidth
   setlocal nonumber
 
@@ -129,6 +130,7 @@ function! eclim#display#window#VerticalToolWindowOpen(name, weight, ...)
     autocmd BufDelete * call s:PreventCloseOnBufferDelete()
     autocmd BufEnter * nested call s:CloseIfLastWindow()
   augroup END
+
   if exists('g:TagList_title') &&
    \ (!exists('g:Tlist_Use_Horiz_Window') || !g:Tlist_Use_Horiz_Window)
     augroup eclim_vertical_tool_windows_move_taglist
@@ -178,7 +180,7 @@ function! eclim#display#window#GetWindowOptions(winnum)
 
   let list = substitute(list, '---.\{-}---', '', '')
   let winopts = {}
-  for wopt in split(list, '\_s\+')[1:]
+  for wopt in split(list, '\(\n\|\s\s\+\)')[1:]
     if wopt =~ '^[a-z]'
       if wopt =~ '='
         let key = substitute(wopt, '\(.\{-}\)=.*', '\1', '')
@@ -203,7 +205,7 @@ function! eclim#display#window#SetWindowOptions(winnum, options)
       if key =~ '^no'
         silent! exec 'setlocal ' . key
       else
-        silent! exec 'setlocal ' . key . '=' . a:options[key]
+        silent! exec 'setlocal ' . key . '=' . escape(a:options[key], ' ')
       endif
     endfor
   finally
@@ -221,6 +223,11 @@ function! s:CloseIfLastWindow() " {{{
       if exists('g:TagList_title') && bufname(bufnr) == g:TagList_title
         continue
       endif
+      if exists('g:BufExplorer_title') && bufname(bufnr) == '[BufExplorer]'
+        let close = 0
+        break
+      endif
+
       let buftype = getbufvar(bufnr, '&buftype')
       if buftype != '' && buftype != 'help'
         continue
@@ -308,9 +315,7 @@ function! s:PreventCloseOnBufferDelete() " {{{
     let curbuf = bufnr('%')
     exec 'let bufnr = ' . expand('<abuf>')
 
-    redir => list
-    silent exec 'buffers'
-    redir END
+    let allbuffers = eclim#common#buffers#GetBuffers()
 
     " build list of buffers open in other tabs to exclude
     let tabbuffers = []
@@ -325,22 +330,29 @@ function! s:PreventCloseOnBufferDelete() " {{{
       let index += 1
     endwhile
 
-    " build list of buffers not open in any window
-    let buffers = []
-    for entry in split(list, '\n')
-      exec 'let bnum = ' . substitute(entry, '\s*\([0-9]\+\).*', '\1', '')
+    " build list of buffers not open in any window, and last seen on the
+    " current tab.
+    let hiddenbuffers = []
+    for buffer in allbuffers
+      let bnum = buffer.bufnr
       if bnum != bufnr && index(tabbuffers, bnum) == -1 && bufwinnr(bnum) == -1
+        let eclim_tab_id = getbufvar(bnum, 'eclim_tab_id')
+        if eclim_tab_id != '' && eclim_tab_id != t:eclim_tab_id
+          continue
+        endif
+
         if bnum < bufnr
-          call insert(buffers, bnum)
+          call insert(hiddenbuffers, bnum)
         else
-          call add(buffers, bnum)
+          call add(hiddenbuffers, bnum)
         endif
       endif
     endfor
 
     " we found a hidden buffer, so open it
-    if len(buffers) > 0
-      exec 'buffer ' . buffers[0]
+    if len(hiddenbuffers) > 0
+      let curbuf = hiddenbuffers[0]
+      exec 'buffer ' . hiddenbuffers[0]
       doautocmd BufEnter
       doautocmd BufWinEnter
       doautocmd BufReadPost
