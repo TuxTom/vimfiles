@@ -7,10 +7,11 @@ fun! s:f.getJiraSummary(queue, id)
     return
   endif
 
-  echomsg  g:jira_cmdline_app . " -s " . g:jira_server . " -u " . g:jira_username . " -p " . g:jira_password . " -a getFieldValue --field Summary --issue " . a:queue . "-" . a:id 
+  " echomsg  g:jira_cmdline_app . " -s " . g:jira_server . " -u " . g:jira_username . " -p " . g:jira_password . " -a getFieldValue --field Summary --issue " . a:queue . "-" . a:id 
   let result = system( g:jira_cmdline_app . " -s " . g:jira_server . " -u " . g:jira_username . " -p " . g:jira_password . " -a getFieldValue --field Summary --issue " . a:queue . "-" . a:id )
-  echo "result: " . result
+  " echo "result: " . result
   if v:shell_error
+    echoerr "error: " . v:shell_error
     return
   endif
 

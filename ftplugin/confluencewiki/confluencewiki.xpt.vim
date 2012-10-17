@@ -24,8 +24,8 @@ XSET summary=getJiraSummary( R( 'queue' ), R( 'id' ) )
 ..XPT
 
 XPT reviewprotocol " -- Review Protocol v2.0 --
-XSET queue|pre=TRESOS
-XSET queue|post=UpperCase( V() )
+XSET ticket|pre=expand( '%:t:r' )
+XSET ticket|post=UpperCase( V() )
 ------------------------------------------------------------------------
 Review Protocol v2.0
 ------------------------------------------------------------------------
@@ -33,7 +33,7 @@ Reviewer: `$author^
 ------------------------------------------------------------------------
 Date:     `strftime("%Y-%m-%d %H:%M")^
 ------------------------------------------------------------------------
-Ticket:   `queue^-`id^
+Ticket:   `ticket^
 ------------------------------------------------------------------------
 A) Comments:
 # `cursor^
