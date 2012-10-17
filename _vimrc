@@ -74,6 +74,14 @@ if(v:version >= 703)
 endif
 " }}}
 
+" Try to load file containing passwords {{{
+if(filereadable(expand("~/_vimpasswordrc")))
+  exec "source ~/_vimpasswordrc"
+else
+  echomsg "Password file could not be loaded!"
+endif
+" }}}
+
 nnoremap <Leader><Leader>e :e <C-r>*<CR>
 nnoremap <Leader><Leader>d :diffsplit <C-r>*<CR>
 
@@ -154,6 +162,7 @@ if(has("win32"))
   let g:neocomplcache_enable_underbar_completion=1
   let g:neocomplcache_temporary_dir=$TEMP . '\NeoComplCache'
   let g:neocomplcache_min_keyword_length=2
+  let g:neocomplcache_plugin_disable={'snippets_complete' : 1}
   let g:neocomplcache_min_syntax_length = 3
 
   if !exists('g:neocomplcache_keyword_patterns')
@@ -471,9 +480,11 @@ if(has("win32"))
     let g:neocomplcache_ctags_program=s:ctags_cmd
 
     let g:jira_server = 'https://issue.ebgroup.elektrobit.com'
-    let g:jira_cmdline_app = '"' . g:tools_basedir . '\atlassian-cli-2.5.0\jira.bat"'
-    let g:jira_username = 'asctest'
-    let g:jira_password = '!Test2Asc'
+    let g:jira_cmdline_app = '"' . g:tools_basedir . '\atlassian-cli-2.6.0\jira.bat"'
+    if(exists('g:username'))
+      let g:jira_username = g:username
+      let g:jira_password = g:userpass
+    endif
     " }}}
 
     " Grep {{{
