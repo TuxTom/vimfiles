@@ -16,15 +16,14 @@ XPT jira " <Ticket-Id> - <summary>
 XSET queue|pre=TRESOS
 XSET queue|post=UpperCase( V() )
 XSET summary=getJiraSummary( R( 'queue' ), R( 'id' ) )
-`queue^-`id^ - `summary^
+`queue^-`id^ - `id^substitute(getJiraSummary(R('queue'), R('id')), '\(\u\+\)-\(\d\+\)', '\1 - \2', 'g')^
 `cursor^
 ..XPT
 
 XPT jira_ticket hidden " Echo(UpperCase($_xSnipName) . " - <summary>")
-XSET summary=getJiraSummary( UpperCase(_xSnipName()), R( 'id' ) )
-`UpperCase(_xSnipName())^-`id^ - `summary^
+`UpperCase(_xSnipName())^-`id^ - `id^substitute(getJiraSummary(UpperCase(_xSnipName()), R('id')), '\(\u\+\)-\(\d\+\)', '\1 - \2', 'g')^
 `cursor^
 ..XPT
 
-XPT tresos alias=jira_ticket
-XPT tresoswp alias=jira_ticket
+XPT tresos alias=jira_ticket synonym=TRESOS
+XPT tresoswp alias=jira_ticket synonym=TRESOSWP

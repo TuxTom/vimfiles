@@ -19,8 +19,8 @@ XPTinclude
 XPT jira " {{JiraTicket|{{JIRA domain int}}|<Ticket-Id>}}...
 XSET queue|pre=TRESOS
 XSET queue|post=UpperCase( V() )
-XSET summary=getJiraSummary( R( 'queue' ), R( 'id' ) )
-{{JiraTicket|{{JIRA domain int}}|`queue^-`id^}} - `summary^
+XSET summary=getJiraSummary(R('queue'), R('id'))
+{{JiraTicket|{{JIRA domain int}}|`queue^-`id^}} - `id^getJiraSummary(R('queue'), R('id'))^
 ..XPT
 
 XPT reviewprotocol " -- Review Protocol v2.0 --

@@ -59,13 +59,11 @@ endfunction
 XPT jira " $JIRA_ADDR...
 XSET queue|pre=TRESOS
 XSET queue|post=UpperCase( V() )
-XSET summary=getJiraSummary( R( 'queue' ), R( 'id' ) )
-`$JIRA_ADDR^`queue^-`id^ - `summary^
+`$JIRA_ADDR^`queue^-`id^ - `id^getJiraSummary(R('queue'), R('id'))^
 ..XPT
 
 XPT jira_ticket hidden " Echo($JIRA_ADDR . UpperCase($_xSnipName) . "-...")
-XSET summary=getJiraSummary( UpperCase(_xSnipName()), R( 'id' ) )
-`$JIRA_ADDR^`UpperCase(_xSnipName())^-`id^ - `summary^
+`$JIRA_ADDR^`UpperCase(_xSnipName())^-`id^ - `id^getJiraSummary(UpperCase(_xSnipName()), R('id'))^
 ..XPT
 
 XPT tresos alias=jira_ticket

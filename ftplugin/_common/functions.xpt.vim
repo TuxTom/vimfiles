@@ -4,7 +4,7 @@ let s:f = g:XPTfuncs()
 
 fun! s:f.getJiraSummary(queue, id)
   if a:queue == "" || a:id == ""
-    return
+    return ""
   endif
 
   " echomsg  g:jira_cmdline_app . " -s " . g:jira_server . " -u " . g:jira_username . " -p " . g:jira_password . " -a getFieldValue --field Summary --issue " . a:queue . "-" . a:id 
@@ -12,7 +12,7 @@ fun! s:f.getJiraSummary(queue, id)
   " echo "result: " . result
   if v:shell_error
     echoerr "error: " . v:shell_error
-    return
+    return ""
   endif
 
   " split into lines
@@ -23,5 +23,7 @@ fun! s:f.getJiraSummary(queue, id)
     call remove( lines, 0 )
     return substitute( join( lines, "\n" ), '\s\+$', '', '' )
   endif
+  
+  return ""
 endfunction
 
