@@ -58,8 +58,8 @@ Bundle 'wincent/Command-T'
 
 Bundle 'xml.vim'
 
-Bundle 'altercation/vim-colors-solarized'
+Bundle 'PProvost/vim-ps1'
 
-" Bundle 'Twinside/vim-codeoverview'
+Bundle 'altercation/vim-colors-solarized'
 
 filetype plugin indent on
