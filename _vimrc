@@ -16,7 +16,7 @@ set display=lastline
 set encoding=utf-8
 set expandtab
 set fileformats=unix,dos
-set foldcolumn=0
+set foldcolumn=5
 set foldlevelstart=2
 set formatoptions+=roq
 set formatoptions-=tc
@@ -427,6 +427,7 @@ if(has("win32"))
   
   " Powerline {{{
   let g:Powerline_stl_path_style="short"
+  let g:Powerline_colorscheme = 'solarized'
   " let g:Powerline_theme="skwp"
   " let g:Powerline_colorscheme="skwp"
   " let g:Powerline_symbols_override={'BRANCH': '‡', 'LINE': 'L', 'RO': '‼',}
@@ -468,12 +469,6 @@ if(has("win32"))
 
     " Generalize path to xmllint.exe {{{
     let s:xmllint_cmd=g:tools_basedir . '\libxml\bin\xmllint.exe'
-
-    autocmd FileType xml exec "command! -buffer XMLLint :%!" . s:xmllint_cmd . " --format -"
-    autocmd FileType arxml exec "command! -buffer XMLLint :%!" . s:xmllint_cmd . " --format -"
-    autocmd FileType docbk exec "command! -buffer XMLLint :%!" . s:xmllint_cmd . " --format -"
-    autocmd FileType reqmgr exec "command! -buffer XMLLint :%!" . s:xmllint_cmd . " --format -"
-    autocmd FileType xsd exec "command! -buffer XMLLint :%!" . s:xmllint_cmd . " --format -"
     " }}}
 
     " Needed for Tags completion with Neocomplcache and custom jira-snippets with XPTemplate {{{
@@ -702,8 +697,18 @@ endfunction
 nnoremap <Leader><Space><Space> :call ToggleShowWhitespace()<CR>
 " }}}
 
-" Make vim fold xml tags by syntax {{{
+" Init XML file types {{{
 let g:xml_syntax_folding = 1
+au FileType xml,arxml,ant,docbk,html,reqmgr,reqm2,xhtml,xrl,xsd,xsl call s:initFtXml()
+fun! s:initFtXml()
+  exec "command! -buffer XMLLint :%!" . s:xmllint_cmd . " --format -"
+
+  let fsize = getfsize(expand("<afile>"))
+  if(fsize>0 && fsize<10485760)
+    setlocal foldmethod=syntax
+    normal zR
+  endif
+endfunction
 " }}}
 
 if(has("gui_running"))
