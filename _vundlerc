@@ -22,7 +22,8 @@ Bundle 'nathanaelkane/vim-indent-guides'
 
 Bundle 'Lokaltog/vim-powerline'
 
-Bundle 'Shougo/neocomplcache'
+" Bundle 'Shougo/neocomplcache'
+Bundle 'Valloric/YouCompleteMe'
 Bundle 'drmingdrmer/xptemplate-dist'
 
 Bundle 'scrooloose/nerdtree'
@@ -33,10 +34,10 @@ Bundle 'scrooloose/nerdcommenter'
 
 Bundle 'grep.vim'
 
-Bundle 'vimwiki'
-Bundle 'calendar.vim--Matsumoto'
+" Bundle 'vimwiki'
+" Bundle 'calendar.vim--Matsumoto'
 
-Bundle 'taglist.vim'
+" Bundle 'taglist.vim'
 
 Bundle 'confluencewiki.vim'
 
@@ -54,12 +55,18 @@ Bundle 'scratch'
 " Bundle 'chrisbra/NrrwRgn'
 " Bundle 'vim-orgmode'
 
-Bundle 'wincent/Command-T'
+" Bundle 'wincent/Command-T'
 
-Bundle 'xml.vim'
+Bundle 'kien/ctrlp.vim'
+
+Bundle 'othree/xml.vim'
 
 Bundle 'PProvost/vim-ps1'
 
+" Bundle 'chreekat/vim-paren-crosshairs'
+
 Bundle 'altercation/vim-colors-solarized'
+
+Bundle 'hlissner/vim-multiedit'
 
 filetype plugin indent on

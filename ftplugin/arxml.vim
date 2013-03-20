@@ -4,10 +4,9 @@ endif
 " Don't set 'b:did_ftplugin = 1' because that is xml.vim's responsability.
 
 " Just load the stuff for xml
-runtime ftplugin/xml.vim
+runtime! ftplugin/xml.vim
 
 if has("folding")
-  set foldtext=ArxmlFoldText()
   function! ArxmlFoldText()
     if &fdm=='diff'
       return foldtext()
@@ -34,4 +33,6 @@ if has("folding")
 
     return foldtext
   endfunction
+
+  setlocal foldtext=ArxmlFoldText()
 endif

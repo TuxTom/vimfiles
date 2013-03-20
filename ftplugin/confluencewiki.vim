@@ -24,6 +24,9 @@ fun! s:postAsJiraComment(...) range "{{{
   endif
 
   let s:result = system( g:jira_cmdline_app . " -s " . g:jira_server . " -u " . g:jira_username . " -p " . g:jira_password . " -a addComment " . " --issue " . s:issue . " --file - ", s:commentText )
+  if(v:shell_error)
+    echoerr "Posting as JIRA comment failed: " . s:result
+  endif
 endfunction "}}}
 
-command -buffer -nargs=? -range=% PostAsJiraComment <line1>,<line2>call s:postAsJiraComment(<args>)
+command -buffer -nargs=? -range=% PostAsJiraComment <line1>,<line2>call s:postAsJiraComment("<args>")

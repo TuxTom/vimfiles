@@ -17,7 +17,7 @@ set encoding=utf-8
 set expandtab
 set fileformats=unix,dos
 set foldcolumn=5
-set foldlevelstart=2
+" set foldlevelstart=2
 set formatoptions+=roq
 set formatoptions-=tc
 set helplang=en
@@ -33,7 +33,7 @@ set noignorecase
 set number
 set numberwidth=4
 set scrolloff=3
-set shiftwidth=2
+set shiftwidth=4
 set shortmess=filmnrxoOtTW
 set showbreak=>\ 
 set showtabline=2
@@ -41,7 +41,7 @@ set smartindent
 set smarttab
 set splitbelow
 set splitright
-set tabstop=2
+set tabstop=4
 set updatetime=1000
 set whichwrap=<,>,[,],b,s
 set wildignore+=.svn
@@ -110,16 +110,16 @@ if(has("win32"))
   endfunction "}}}
 
   fun! DoWriteCopy(targetDir) "{{{
-      if( isdirectory(a:targetDir))
-        echomsg "Writing copy of file ".expand("%:p")." to ".fnamemodify(expand(a:targetDir), ":p")
-        let targetfile = fnamemodify(a:targetDir."/".expand("%:t"), ":p")
-        let fc = readfile(expand("%:p"), 'b')
-        if writefile(fc, targetfile, 'b') != 0
-          throw "Copying file ".(expand("%:p")." to ".targetfile." failed"
-        endif
-      else
-        echoerr "Given target directory ".a:targetDir." does not exist!!"
+    if(isdirectory(a:targetDir))
+      echomsg "Writing copy of file ".expand("%:p")." to ".fnamemodify(expand(a:targetDir), ":p")
+      let targetfile = fnamemodify(a:targetDir."/".expand("%:t"), ":p")
+      let fc = readfile(expand("%:p"), 'b')
+      if(writefile(fc, targetfile, 'b') != 0)
+        throw "Copying file ".expand("%:p")." to ".targetfile." failed"
       endif
+    else
+      echoerr "Given target directory ".a:targetDir." does not exist!!"
+    endif
   endfunction "}}}
   " }}}
 
@@ -149,54 +149,43 @@ if(has("win32"))
   let g:showmarks_enable=0
   let g:showmarks_include="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.'`^<>[]{}()\""
   " }}}
-  
+
   " NeoComplCache and XPTemplate {{{
-  let g:neocomplcache_enable_at_startup=1
-  let g:neocomplcache_disable_auto_complete=1
-  let g:neocomplcache_auto_completion_start_length=4
-  let g:neocomplcache_enable_cursor_hold_i=0
-  let g:neocomplcache_enable_smart_case=1
-  let g:neocomplcache_enable_ignore_case=1
-  let g:neocomplcache_enable_auto_select=1
-  let g:neocomplcache_enable_camel_case_completion=1
-  let g:neocomplcache_enable_underbar_completion=1
-  let g:neocomplcache_temporary_dir=$TEMP . '\NeoComplCache'
-  let g:neocomplcache_min_keyword_length=2
-  let g:neocomplcache_plugin_disable={'snippets_complete' : 1}
-  let g:neocomplcache_min_syntax_length = 3
+  " let g:neocomplcache_enable_at_startup=1
+  " let g:neocomplcache_disable_auto_complete=1
+  " let g:neocomplcache_auto_completion_start_length=4
+  " let g:neocomplcache_enable_cursor_hold_i=0
+  " let g:neocomplcache_enable_smart_case=1
+  " let g:neocomplcache_enable_ignore_case=1
+  " let g:neocomplcache_enable_auto_select=1
+  " let g:neocomplcache_enable_camel_case_completion=1
+  " let g:neocomplcache_enable_underbar_completion=1
+  " let g:neocomplcache_temporary_dir=$TEMP . '\NeoComplCache'
+  " let g:neocomplcache_min_keyword_length=2
+  " let g:neocomplcache_plugin_disable={'snippets_complete' : 1}
+  " let g:neocomplcache_min_syntax_length = 3
 
-  if !exists('g:neocomplcache_keyword_patterns')
-    let g:neocomplcache_keyword_patterns = {}
-  endif
-  let g:neocomplcache_keyword_patterns['default'] = '\h\w*' 
-
-  " Enable omnicompletion
-  autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
-  autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
-  autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
-  autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
-  autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags 
-  autocmd FileType arxml setlocal omnifunc=xmlcomplete#CompleteTags 
-  autocmd FileType docbk setlocal omnifunc=xmlcomplete#CompleteTags 
-  autocmd FileType reqmgr setlocal omnifunc=xmlcomplete#CompleteTags 
-
-  " textwidth
-  autocmd FileType docbk setlocal textwidth=120
-  autocmd FileType reqmgr setlocal textwidth=120
+  " if !exists('g:neocomplcache_keyword_patterns')
+  " let g:neocomplcache_keyword_patterns = {}
+  " endif
+  " let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
 
   " If completion menu visible complete common string, otherwise start completion
-  imap <silent><expr><C-Space>     pumvisible() ? "\<Plug>completeCommonString" : "\<C-x>\<C-u>\<C-p>"
+  " imap <silent><expr><C-Space>     pumvisible() ? "\<Plug>completeCommonString" : "\<C-x>\<C-u>\<C-p>"
 
-  inoremap <expr><Plug>completeCommonString             neocomplcache#complete_common_string() . "\<C-x>\<C-u>\<C-p>"
-  inoremap <expr><C-x><C-f>                             neocomplcache#manual_filename_complete()
-  inoremap <expr><C-x><C-o>                             neocomplcache#manual_omni_complete()
-  inoremap <expr><C-n>                                  pumvisible() ? "\<C-n>" : neocomplcache#manual_keyword_complete()
-  inoremap <expr><C-BS>                                 neocomplcache#undo_completion()
+  " inoremap <expr><Plug>completeCommonString             neocomplcache#complete_common_string() . "\<C-x>\<C-u>\<C-p>"
+  " inoremap <expr><C-x><C-f>                             neocomplcache#manual_filename_complete()
+  " inoremap <expr><C-x><C-o>                             neocomplcache#manual_omni_complete()
+  " inoremap <expr><C-n>                                  pumvisible() ? "\<C-n>" : neocomplcache#manual_keyword_complete()
+  " inoremap <expr><C-BS>                                 neocomplcache#undo_completion()
 
-  let g:xptemplate_key="<Plug>XPTExpandOrNext"
-  let g:xptemplate_nav_next="<Plug>XPTExpandOrNext"
-  let g:xptemplate_nav_prev="<S-Tab>"
-  let g:xptemplate_fallback="<Plug>Tab"
+  " let g:xptemplate_key="<Plug>XPTExpandOrNext"
+  " let g:xptemplate_nav_next="<Plug>XPTExpandOrNext"
+  " let g:xptemplate_nav_prev="<S-Tab>"
+  " let g:xptemplate_fallback="<Plug>Tab"
+  let g:xptemplate_key="<C-j>"
+  let g:xptemplate_nav_next="<C-j>"
+  let g:xptemplate_nav_prev="<C-k>"
 
   let g:xptemplate_always_show_pum=1
   let g:xptemplate_brace_complete=0
@@ -205,13 +194,15 @@ if(has("win32"))
   let g:xptemplate_highlight='following,next'
   let g:xptemplate_highlight_nested=1
 
-  imap <expr><Tab>                                      pumvisible() ? "\<Down>" : "\<Plug>XPTExpandOrNext"
-  smap <expr><Tab>                                      pumvisible() ? "\<Down>" : "\<Plug>XPTExpandOrNext"
-  imap <expr><S-Tab>                                    pumvisible() ? "\<Up>" : "\<S-Tab>"
-  smap <expr><S-Tab>                                    pumvisible() ? "\<Up>" : "\<S-Tab>"
+  " let g:ycm_key_list_select_completion = []
+  " let g:ycm_key_list_previous_completion = []
+
+  " imap <expr><Tab>                                      pumvisible() ? "\<C-n>" : "\<Plug>XPTExpandOrNext"
+  " smap <expr><Tab>                                      pumvisible() ? "\<C-n>" : "\<Plug>XPTExpandOrNext"
+  " imap <expr><S-Tab>                                    pumvisible() ? "\<C-p>" : "\<S-Tab>"
+  " smap <expr><S-Tab>                                    pumvisible() ? "\<C-p>" : "\<S-Tab>"
   inoremap <Plug>Tab                                    <Tab>
   snoremap <Plug>Tab                                    <Tab>
-
   " }}}
 
   " NERDTree {{{
@@ -222,8 +213,8 @@ if(has("win32"))
   let g:NERDTreeShowBookmarks=1
 
   nmap <silent> <Leader>N :NERDTreeToggle<CR>
-  nmap <Leader>nb :NERDTreeFromBookmark 
-  nmap <Leader>nf :NERDTree 
+  nmap <Leader>nb :NERDTreeFromBookmark
+  nmap <Leader>nf :NERDTree
 
   " }}}
 
@@ -383,7 +374,7 @@ if(has("win32"))
     au!
     au BufNewFile ~/vimwiki/Journal/[0-9][0-9][0-9][0-9]-[0-1][0-9]-[0-3][0-9].wiki call PortJournalEntries()
   augroup end
-  
+
   augroup Vimrc_JournalFolding
     au!
     au BufReadPost ~/vimwiki/Journal/[0-9][0-9][0-9][0-9]-[0-1][0-9]-[0-3][0-9].wiki call ResetJournalFolding()
@@ -424,10 +415,10 @@ if(has("win32"))
   " }}}
 
   " }}}
-  
+
   " Powerline {{{
   let g:Powerline_stl_path_style="short"
-  let g:Powerline_colorscheme = 'solarized'
+  let g:Powerline_colorscheme = 'solarized256'
   " let g:Powerline_theme="skwp"
   " let g:Powerline_colorscheme="skwp"
   " let g:Powerline_symbols_override={'BRANCH': '‡', 'LINE': 'L', 'RO': '‼',}
@@ -442,12 +433,16 @@ if(has("win32"))
   let g:netrw_list_cmd = "plink.exe HOSTNAME ls -Fla "
   " }}}
 
-  " Command-T {{{
-  let g:CommandTAlwaysShowDotFiles = 1
-  let g:CommandTScanDotDirectories = 1
-  let g:CommandTMatchWindowReverse = 1
-  let g:CommandTMaxCachedDirectories = 10
+  " Command-T (disabled) {{{
+  " let g:CommandTAlwaysShowDotFiles = 1
+  " let g:CommandTScanDotDirectories = 1
+  " let g:CommandTMatchWindowReverse = 1
+  " let g:CommandTMaxCachedDirectories = 10
+  " }}}
 
+  " CtrlP {{{
+  let g:ctrlp_cache_dir = $TEMP.'/vim/ctrlp'
+  let g:ctrlp_show_hidden = 1
   " }}}
 
   " colorschemes {{{
@@ -468,7 +463,7 @@ if(has("win32"))
     " }}}
 
     " Generalize path to xmllint.exe {{{
-    let s:xmllint_cmd=g:tools_basedir . '\libxml\bin\xmllint.exe'
+    let g:xmllint_cmd=g:tools_basedir . '\libxml\bin\xmllint.exe'
     " }}}
 
     " Needed for Tags completion with Neocomplcache and custom jira-snippets with XPTemplate {{{
@@ -535,14 +530,14 @@ if(has("win32"))
   " let g:miniBufExplMapCTabSwitchBufs = 1
 
   " fun! ReopenMBE()
-    " TMiniBufExplorer
-    " TMiniBufExplorer
+  " TMiniBufExplorer
+  " TMiniBufExplorer
   " endfun
-  
+
   " augroup Vimrc_MBE
-    " au BufWinEnter NERD_tree_* call ReopenMBE()
-    " au BufWinEnter __Tag_List__ call ReopenMBE()
-    " au BufWinEnter __Calendar call ReopenMBE()
+  " au BufWinEnter NERD_tree_* call ReopenMBE()
+  " au BufWinEnter __Tag_List__ call ReopenMBE()
+  " au BufWinEnter __Calendar call ReopenMBE()
   " augroup END
 
   " nmap <Leader>M :TMiniBufExplorer<CR>
@@ -609,7 +604,7 @@ fun! ToggleHlCursorWord()
     let s:hl_cursor_word=1
     augroup Vimrc_HlCursorWord
       au!
-      au CursorHold,CursorHoldI * exec 'match IncSearch /\V\<'. escape(expand ("<cword>"), '\/') .'\>/' 
+      au CursorHold,CursorHoldI * exec 'match IncSearch /\V\<'. escape(expand ("<cword>"), '\/') .'\>/'
     augroup end
   else
     let s:hl_cursor_word=0
@@ -672,7 +667,7 @@ nnoremap <M-j> :wincmd j<CR>
 " }}}
 
 " Show leading whitespace that includes spaces, and trailing whitespace. {{{
-au ColorScheme * hi default link ErrorWhiteSpace Error
+au ColorScheme * hi default link ErrorWhiteSpace ErrorMsg
 
 function! ToggleShowWhitespace()
   if !exists('b:ws_show')
@@ -697,31 +692,27 @@ endfunction
 nnoremap <Leader><Space><Space> :call ToggleShowWhitespace()<CR>
 " }}}
 
-" Init XML file types {{{
-let g:xml_syntax_folding = 1
-au FileType xml,arxml,ant,docbk,html,reqmgr,reqm2,xhtml,xrl,xsd,xsl call s:initFtXml()
-fun! s:initFtXml()
-  exec "command! -buffer XMLLint :%!" . s:xmllint_cmd . " --format -"
-
-  let fsize = getfsize(expand("<afile>"))
-  if(fsize>0 && fsize<10485760)
-    setlocal foldmethod=syntax
-    normal zR
-  endif
-endfunction
+" FileType specific omnicomplete settings {{{
+augroup OmniComplete
+    autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
+    autocmd FileType markdown setlocal omnifunc=htmlcomplete#CompleteTags
+    autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
+    autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
+augroup end
 " }}}
 
 if(has("gui_running"))
   set cursorline
+  set cursorcolumn
 else
   set nocursorline
+  set nocursorcolumn
 endif
 
 set background=light
 colorscheme solarized
-
 filetype plugin indent on
 autocmd Filetype * if &omnifunc == "" |
-                 \   setlocal omnifunc=syntaxcomplete#Complete |
-                 \ endif
+                \    setlocal omnifunc=syntaxcomplete#Complete |
+                \  endif
 syntax on

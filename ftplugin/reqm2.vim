@@ -4,4 +4,6 @@ endif
 " Don't set 'b:did_ftplugin = 1' because that is xml.vim's responsability.
 
 " Just load the stuff for xml
-runtime ftplugin/xml.vim
+runtime! ftplugin/xml.vim
+
+setlocal textwidth=120
