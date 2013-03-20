@@ -120,7 +120,7 @@ endif
 
 if !exists("g:EclimHome")
   " set at build/install time.
-  let g:EclimHome = 'C:\Tools\eclipse\4.2/plugins/org.eclim_2.2.2'
+  let g:EclimHome = 'C:\Tools\eclipse\4.2/plugins/org.eclim_2.2.5'
   if has('win32unix')
     let g:EclimHome = eclim#cygwin#CygwinPath(g:EclimHome)
   endif
@@ -304,7 +304,7 @@ if g:EclimSignLevel
   augroup END
 endif
 
-if g:EclimBufferTabTracking
+if g:EclimBufferTabTracking && exists('*gettabvar')
   call eclim#common#buffers#TabInit()
   augroup eclim_buffer_tab_tracking
     autocmd!

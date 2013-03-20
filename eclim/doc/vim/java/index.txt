@@ -15,7 +15,7 @@ Features
 - Javadoc Support (vim-java-javadoc)
 - Java Source Code Formatting (vim-java-format)
 - Java Refactoring (vim-java-refactor)
-- Java Code Inspetion (vim-java-inspection)
+- Java Code Inspection (vim-java-inspection)
 - Automated Imports (vim-java-import)
 - Method Generation (vim-java-methods)
 - Unit Tests (vim-java-unittests)
