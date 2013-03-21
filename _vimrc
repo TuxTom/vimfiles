@@ -182,10 +182,10 @@ if(has("win32"))
   " let g:xptemplate_key="<Plug>XPTExpandOrNext"
   " let g:xptemplate_nav_next="<Plug>XPTExpandOrNext"
   " let g:xptemplate_nav_prev="<S-Tab>"
-  " let g:xptemplate_fallback="<Plug>Tab"
-  let g:xptemplate_key="<C-j>"
-  let g:xptemplate_nav_next="<C-j>"
-  let g:xptemplate_nav_prev="<C-k>"
+  let g:xptemplate_key="<C-CR>"
+  let g:xptemplate_nav_next="<C-CR>"
+  let g:xptemplate_nav_prev="<C-S-CR>"
+  let g:xptemplate_fallback="<C-CR>"
 
   let g:xptemplate_always_show_pum=1
   let g:xptemplate_brace_complete=0
@@ -201,8 +201,8 @@ if(has("win32"))
   " smap <expr><Tab>                                      pumvisible() ? "\<C-n>" : "\<Plug>XPTExpandOrNext"
   " imap <expr><S-Tab>                                    pumvisible() ? "\<C-p>" : "\<S-Tab>"
   " smap <expr><S-Tab>                                    pumvisible() ? "\<C-p>" : "\<S-Tab>"
-  inoremap <Plug>Tab                                    <Tab>
-  snoremap <Plug>Tab                                    <Tab>
+  " inoremap <Plug>Tab                                    <Tab>
+  " snoremap <Plug>Tab                                    <Tab>
   " }}}
 
   " NERDTree {{{
@@ -213,8 +213,8 @@ if(has("win32"))
   let g:NERDTreeShowBookmarks=1
 
   nmap <silent> <Leader>N :NERDTreeToggle<CR>
-  nmap <Leader>nb :NERDTreeFromBookmark
-  nmap <Leader>nf :NERDTree
+  nmap <Leader>nb :NERDTreeFromBookmark 
+  nmap <Leader>nf :NERDTree 
 
   " }}}
 
@@ -230,155 +230,6 @@ if(has("win32"))
   vmap <Leader>cm <Plug>NERDCommenterMinimal
   nmap <Leader>cs <Plug>NERDCommenterSexy
   vmap <Leader>cs <Plug>NERDCommenterSexy
-
-  " }}}
-
-  " Vimwiki {{{
-  let wiki={}
-  let wiki.path='~/vimwiki/'
-  let wiki.nested_syntaxes={'perl': 'perl', 'xml': 'xml', 'docbook': 'docbk', 'java': 'java', 'bash': 'sh', 'ant': 'ant', 'sql': 'sql', 'vim': 'vim'}
-  let wiki.diary_index='index'
-  let wiki.diary_rel_path='Journal/'
-  let wiki.maxhi=0
-  let g:vimwiki_list=[wiki]
-  let g:vimwiki_hl_headers=1
-  let g:vimwiki_hl_cb_checked=1
-  let g:vimwiki_menu=''
-  let g:vimwiki_use_mouse=1
-  let g:vimwiki_badsyms=' '
-  let g:vimwiki_camel_case=0
-  let g:vimwiki_dir_link='index'
-  let g:vimwiki_folding=1
-  let g:vimwiki_fold_lists=1
-  let g:vimwiki_conceallevel=2
-  let g:vimwiki_table_auto_fmt=0
-
-  function! ToggleJournalAndCal() "{{{
-    let winnr_cal = bufwinnr('__Calendar')
-    let winnr_journal = bufwinnr('*vimwiki\Journal\'.strftime('%Y-%m-%d').'.wiki')
-    if (winnr_cal == -1) || (winnr_journal == -1)
-      " echomsg "Opening journal and calendar..."
-      if winnr_cal == -1
-        " echomsg "Opening calendar..."
-        Calendar
-        normal 
-      endif
-      if winnr_journal == -1
-        " echomsg "Opening journal..."
-        VimwikiMakeDiaryNote
-      endif
-    else
-      " echomsg "Closing journal and calendar..."
-      if winnr_cal != -1
-        " echomsg "Closing calendar..."
-        call s:CloseWin( winnr_cal )
-      endif
-      if winnr_journal != -1
-        " echomsg "Closing journal..."
-        call s:CloseWin( winnr_journal )
-      endif
-    endif
-  endfunction
-  command! -nargs=0 ToggleJournalAndCal :call ToggleJournalAndCal()
-
-  fun! s:CloseWin( winnr ) "{{{
-    if (winnr('$') == 1) && (tabpagenr('$') == 1)
-      enew
-    else
-      execute a:winnr.'wincmd w'
-      close
-    endif
-  endfunction "}}}
-  " }}}
-
-  nnoremap <Leader>J :ToggleJournalAndCal<CR>
-
-  function! PortJournalEntries() "{{{
-    echomsg "Port journal entries called"
-    let date = matchlist(expand('%:t:r'), '\(\d\{4}\)-\(\d\{2}\)-\(\d\{2}\)')
-    let date = date[1:-1]
-    if date[0] == '' || date[1] == '' || date[2] == ''
-      echoerr "PortJournalEntries: could not determine date, got ".date[0]."-".date[1]."-".date[2]
-      return
-    endif
-    let last_date = s:ReduceDate(date)
-    let tries = 0
-    let wiki_file = s:GetWikiFilename(last_date)
-    " echomsg "Trying to read ".wiki_file
-    while !filereadable(wiki_file)
-      let tries += 1
-      if tries == 50
-        echoerr "PortJournalEntries: could not find last journal entry in the last 50 days"
-        return
-      endif
-      let last_date = s:ReduceDate(last_date)
-      let wiki_file = s:GetWikiFilename(last_date)
-      " echomsg "Trying to read ".wiki_file
-    endwhile
-    echomsg "Copying journal entries from file ".wiki_file
-    execute 'read '.wiki_file
-    " This will leave one empty line on top, so delete this:
-    0 delete
-    " Delete all completed top level items
-    " This means:
-    " - [%s/]: substitute
-    " - [ ^\* \[X\] ]: every line beginning with '* [X] '
-    " - [\_.\{-}]: followed by as many characters of any kind (including newline) as
-    "   needed (but not more)
-    " - [\(\n\?\ze\%$\)\|\(\n\ze\*\|\(\s*\n\)\)]: followed by one of
-    "   - [\n\?\ze\%$]: optionally a newline (then stop the match, check only) and
-    "     end-of-file
-    "   - [\n\ze\*]: a newline (then stop the match, check only) and a literal asterisk
-    "   - [\n\ze\s*\n]: a newline (then stop the match, check only) and as
-    "     many whitespace characters as possible and another newline
-    % substitute/^\* \[X\] \_.\{-}\(\(\n\?\ze\%$\)\|\(\n\ze\*\)\|\(\n\ze\s*\n\)\)//e
-    " Delete empty line at the end of the file that may occur due to the last
-    " substitute
-    silent! /^\s*\%$/ delete
-    " Reset the folding
-    call ResetJournalFolding()
-  endfunction "}}}
-
-  let s:days_per_month = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
-
-  fun! s:ReduceDate(date) "{{{
-    let year = a:date[0]
-    let month = a:date[1]
-    let day = a:date[2]
-
-    let day -= 1
-    if day == 0 " Flip over month boundary
-      let month -= 1
-      if month == 0 " Flip over year boundary
-        let year -= 1
-        let month = 12
-      endif
-      let day = s:days_per_month[month-1]
-    endif
-    return [year, month, day]
-  endfunction "}}}
-
-  fun! s:GetWikiFilename( date ) "{{{
-    return printf("%s/vimwiki/Journal/%04d-%02d-%02d.wiki", expand('~'), a:date[0], a:date[1], a:date[2])
-  endfunction "}}}
-
-  fun! ResetJournalFolding() "{{{
-    echomsg "Reset folding called"
-    " Close all folds
-    setlocal foldlevel=0
-    " Open all folds that are not marked as done ("[X]")
-    global/^\s*\* \[[^X]\]/silent! verbose normal zo
-  endfunction "}}}
-
-  augroup Vimrc_PortJournalEntries
-    au!
-    au BufNewFile ~/vimwiki/Journal/[0-9][0-9][0-9][0-9]-[0-1][0-9]-[0-3][0-9].wiki call PortJournalEntries()
-  augroup end
-
-  augroup Vimrc_JournalFolding
-    au!
-    au BufReadPost ~/vimwiki/Journal/[0-9][0-9][0-9][0-9]-[0-1][0-9]-[0-3][0-9].wiki call ResetJournalFolding()
-  augroup end
 
   " }}}
 
@@ -466,9 +317,7 @@ if(has("win32"))
     let g:xmllint_cmd=g:tools_basedir . '\libxml\bin\xmllint.exe'
     " }}}
 
-    " Needed for Tags completion with Neocomplcache and custom jira-snippets with XPTemplate {{{
-    let g:neocomplcache_ctags_program=s:ctags_cmd
-
+    " Needed for custom jira-snippets with XPTemplate {{{
     let g:jira_server = 'https://issue.ebgroup.elektrobit.com'
     let g:jira_cmdline_app = '"' . g:tools_basedir . '\atlassian-cli-2.6.0\jira.bat"'
     if(exists('g:username'))
@@ -504,9 +353,163 @@ if(has("win32"))
     " }}}
   endif
 
-  " Eclim (disabled) {{{
+  " Eclim {{{
+  if !exists('g:EclimStartOnStartup')
+    augroup DisableEclim
+      au VimEnter * EclimDisable
+    augroup end
+  endif
   " let g:EclimProjectTreeAutoOpen=1
   " let g:EclimShowErrors=1
+  " }}}
+
+  " Vimwiki (disabled) {{{
+  " let wiki={}
+  " let wiki.path='~/vimwiki/'
+  " let wiki.nested_syntaxes={'perl': 'perl', 'xml': 'xml', 'docbook': 'docbk', 'java': 'java', 'bash': 'sh', 'ant': 'ant', 'sql': 'sql', 'vim': 'vim'}
+  " let wiki.diary_index='index'
+  " let wiki.diary_rel_path='Journal/'
+  " let wiki.maxhi=0
+  " let g:vimwiki_list=[wiki]
+  " let g:vimwiki_hl_headers=1
+  " let g:vimwiki_hl_cb_checked=1
+  " let g:vimwiki_menu=''
+  " let g:vimwiki_use_mouse=1
+  " let g:vimwiki_badsyms=' '
+  " let g:vimwiki_camel_case=0
+  " let g:vimwiki_dir_link='index'
+  " let g:vimwiki_folding=1
+  " let g:vimwiki_fold_lists=1
+  " let g:vimwiki_conceallevel=2
+  " let g:vimwiki_table_auto_fmt=0
+
+  " function! ToggleJournalAndCal() "{{{
+    " let winnr_cal = bufwinnr('__Calendar')
+    " let winnr_journal = bufwinnr('*vimwiki\Journal\'.strftime('%Y-%m-%d').'.wiki')
+    " if (winnr_cal == -1) || (winnr_journal == -1)
+      " echomsg "Opening journal and calendar..."
+      " if winnr_cal == -1
+        " echomsg "Opening calendar..."
+        " Calendar
+        " normal 
+      " endif
+      " if winnr_journal == -1
+        " echomsg "Opening journal..."
+        " VimwikiMakeDiaryNote
+      " endif
+    " else
+      " echomsg "Closing journal and calendar..."
+      " if winnr_cal != -1
+        " echomsg "Closing calendar..."
+        " call s:CloseWin( winnr_cal )
+      " endif
+      " if winnr_journal != -1
+        " echomsg "Closing journal..."
+        " call s:CloseWin( winnr_journal )
+      " endif
+    " endif
+  " endfunction
+  " command! -nargs=0 ToggleJournalAndCal :call ToggleJournalAndCal()
+
+  " fun! s:CloseWin( winnr ) "{{{
+    " if (winnr('$') == 1) && (tabpagenr('$') == 1)
+      " enew
+    " else
+      " execute a:winnr.'wincmd w'
+      " close
+    " endif
+  " endfunction "}}}
+  " }}}
+
+  " nnoremap <Leader>J :ToggleJournalAndCal<CR>
+
+  " function! PortJournalEntries() "{{{
+    " echomsg "Port journal entries called"
+    " let date = matchlist(expand('%:t:r'), '\(\d\{4}\)-\(\d\{2}\)-\(\d\{2}\)')
+    " let date = date[1:-1]
+    " if date[0] == '' || date[1] == '' || date[2] == ''
+      " echoerr "PortJournalEntries: could not determine date, got ".date[0]."-".date[1]."-".date[2]
+      " return
+    " endif
+    " let last_date = s:ReduceDate(date)
+    " let tries = 0
+    " let wiki_file = s:GetWikiFilename(last_date)
+    " echomsg "Trying to read ".wiki_file
+    " while !filereadable(wiki_file)
+      " let tries += 1
+      " if tries == 50
+        " echoerr "PortJournalEntries: could not find last journal entry in the last 50 days"
+        " return
+      " endif
+      " let last_date = s:ReduceDate(last_date)
+      " let wiki_file = s:GetWikiFilename(last_date)
+      " echomsg "Trying to read ".wiki_file
+    " endwhile
+    " echomsg "Copying journal entries from file ".wiki_file
+    " execute 'read '.wiki_file
+    " This will leave one empty line on top, so delete this:
+    " 0 delete
+    " Delete all completed top level items
+    " This means:
+    " - [%s/]: substitute
+    " - [ ^\* \[X\] ]: every line beginning with '* [X] '
+    " - [\_.\{-}]: followed by as many characters of any kind (including newline) as
+    "   needed (but not more)
+    " - [\(\n\?\ze\%$\)\|\(\n\ze\*\|\(\s*\n\)\)]: followed by one of
+    "   - [\n\?\ze\%$]: optionally a newline (then stop the match, check only) and
+    "     end-of-file
+    "   - [\n\ze\*]: a newline (then stop the match, check only) and a literal asterisk
+    "   - [\n\ze\s*\n]: a newline (then stop the match, check only) and as
+    "     many whitespace characters as possible and another newline
+    " % substitute/^\* \[X\] \_.\{-}\(\(\n\?\ze\%$\)\|\(\n\ze\*\)\|\(\n\ze\s*\n\)\)//e
+    " Delete empty line at the end of the file that may occur due to the last
+    " substitute
+    " silent! /^\s*\%$/ delete
+    " Reset the folding
+    " call ResetJournalFolding()
+  " endfunction "}}}
+
+  " let s:days_per_month = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+
+  " fun! s:ReduceDate(date) "{{{
+    " let year = a:date[0]
+    " let month = a:date[1]
+    " let day = a:date[2]
+
+    " let day -= 1
+    " if day == 0 " Flip over month boundary
+      " let month -= 1
+      " if month == 0 " Flip over year boundary
+        " let year -= 1
+        " let month = 12
+      " endif
+      " let day = s:days_per_month[month-1]
+    " endif
+    " return [year, month, day]
+  " endfunction "}}}
+
+  " fun! s:GetWikiFilename( date ) "{{{
+    " return printf("%s/vimwiki/Journal/%04d-%02d-%02d.wiki", expand('~'), a:date[0], a:date[1], a:date[2])
+  " endfunction "}}}
+
+  " fun! ResetJournalFolding() "{{{
+    " echomsg "Reset folding called"
+    " Close all folds
+    " setlocal foldlevel=0
+    " Open all folds that are not marked as done ("[X]")
+    " global/^\s*\* \[[^X]\]/silent! verbose normal zo
+  " endfunction "}}}
+
+  " augroup Vimrc_PortJournalEntries
+    " au!
+    " au BufNewFile ~/vimwiki/Journal/[0-9][0-9][0-9][0-9]-[0-1][0-9]-[0-3][0-9].wiki call PortJournalEntries()
+  " augroup end
+
+  " augroup Vimrc_JournalFolding
+    " au!
+    " au BufReadPost ~/vimwiki/Journal/[0-9][0-9][0-9][0-9]-[0-1][0-9]-[0-3][0-9].wiki call ResetJournalFolding()
+  " augroup end
+
   " }}}
 
   " Conque_Shell (disabled) {{{
@@ -649,12 +652,14 @@ inoremap <expr> <Up> pumvisible() ? "\<Up>" : "\<C-o>gk"
 " }}}
 
 " Make it possible to move in insert mode without touching the cursor keys via <C-motion> {{{
-inoremap <C-h> <C-o>h
-inoremap <C-l> <C-o>l
+" Do not use the cursor keys for up/down to also move if the pum is visible
+" and to move in screen lines
+inoremap <C-h> <Left>
+inoremap <C-l> <Right>
 inoremap <C-j> <C-o>gj
 inoremap <C-k> <C-o>gk
-snoremap <C-h> <C-o>h
-snoremap <C-l> <C-o>l
+snoremap <C-h> <Left>
+snoremap <C-l> <Right>
 snoremap <C-j> <C-o>gj
 snoremap <C-k> <C-o>gk
 " }}}

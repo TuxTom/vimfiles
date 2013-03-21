@@ -27,7 +27,6 @@ Bundle 'Valloric/YouCompleteMe'
 Bundle 'drmingdrmer/xptemplate-dist'
 
 Bundle 'scrooloose/nerdtree'
-
 Bundle 'scrooloose/nerdcommenter'
 
 " Bundle 'scrooloose/syntastic'
@@ -44,12 +43,6 @@ Bundle 'confluencewiki.vim'
 Bundle 'Raimondi/delimitMate'
 
 Bundle 'scratch'
-
-" if !exists('g:EclimStartOnStartup')
-  " command! -nargs=0 EclimPowerOn :call scriptmanager#Activate(["eclim"])|delcommand EclimPowerOn
-" else
-  " Bundle ''
-" endif
 
 " Bundle 'utl.vim'
 " Bundle 'chrisbra/NrrwRgn'

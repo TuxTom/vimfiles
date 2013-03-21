@@ -1,4 +1,4 @@
 set guifont=Consolas:h8:cANSI
-set guicursor=a:blinkon0-block,i-ci:blinkon0-ver20,r-cr:blinkon0-hor20
+set guicursor=a:blinkon0-block,i-ci:blinkon0-ver20,r-cr:blinkon0-hor20,o:blinkon0-hor50
 set guioptions=eM
 set langmenu=en

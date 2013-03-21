@@ -159,11 +159,11 @@ function! eclim#common#buffers#GetBuffers(...) " {{{
   let options = a:0 ? a:1 : {}
 
   let saved_lang = v:lang
-  language C
+  language messages C
   redir => list
   silent buffers
   redir END
-  execute 'language' saved_lang
+  execute 'language messages' saved_lang
 
   let buffers = []
   let maxfilelength = 0
