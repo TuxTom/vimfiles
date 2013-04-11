@@ -11,6 +11,10 @@ augroup filetypedetect
   au! BufRead,BufNewFile *.jet      set filetype=jet
   au! BufRead,BufNewFile *.xrl      set filetype=xrl
   au! BufRead,BufNewFile *.cwiki    set filetype=confluencewiki
+  au! BufRead,BufNewFile *.wiki     set filetype=mediawiki
+
+  au! BufRead,BufNewFile wiki.elektrobit.com.*            set filetype=mediawiki
+  au! BufRead,BufNewFile issue.ebgroup.elektrobit.com.*   set filetype=confluencewiki
 augroup END
 
 func! s:CustomFTxml()

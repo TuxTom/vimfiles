@@ -270,6 +270,8 @@ if(has("win32"))
   " Powerline {{{
   let g:Powerline_stl_path_style="short"
   let g:Powerline_colorscheme = 'solarized256'
+  let g:Powerline_theme = 'custom' " removed the branch info and unused plugin stuff from the default theme
+  " let g:Powerline_theme = 'solarized256'
   " let g:Powerline_theme="skwp"
   " let g:Powerline_colorscheme="skwp"
   " let g:Powerline_symbols_override={'BRANCH': '‡', 'LINE': 'L', 'RO': '‼',}
