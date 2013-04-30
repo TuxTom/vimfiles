@@ -269,10 +269,17 @@ if(has("win32"))
   let g:NERDChristmasTree=1
   let g:NERDTreeShowBookmarks=1
 
-  nmap <silent> <Leader>N :NERDTreeToggle<CR>
-  nmap <Leader>nb :NERDTreeFromBookmark 
-  nmap <Leader>nf :NERDTree 
+  let g:nerdtree_tabs_open_on_gui_startup = 0
 
+  fun! NERDTreeTabsDir(dir)
+    exec "NERDTree " . a:dir
+    NERDTreeTabsOpen
+  endfunction
+
+  command! -nargs=1 -complete=dir NERDTreeTabsDir :call NERDTreeTabsDir('<args>')
+
+  nmap <silent> <Leader>N :NERDTreeTabsToggle<CR>
+  nmap <Leader>nf :NERDTreeTabsDir 
   " }}}
 
   " NERDCommenter {{{

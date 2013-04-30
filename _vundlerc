@@ -31,6 +31,8 @@ Bundle 'SirVer/ultisnips'
 Bundle 'scrooloose/nerdtree'
 Bundle 'scrooloose/nerdcommenter'
 
+Bundle 'jistr/vim-nerdtree-tabs'
+
 " Bundle 'scrooloose/syntastic'
 
 Bundle 'grep.vim'
