@@ -10,7 +10,7 @@ fun! s:postAsJiraComment(...) range "{{{
     let s:commentText .= "\r"
   endfor
 
-  if(a:0 > 0)
+  if(a:0 > 0 && a:1 != '')
     let s:issue = a:1
   else
     let s:issue = expand('%:t:r')

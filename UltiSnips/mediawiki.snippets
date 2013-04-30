@@ -1,0 +1,56 @@
+global !p
+import subprocess
+
+def get_jira_summary(ticketId, snip):
+    if ticketId:
+        jira_cmdline_app  = snip.opt("g:jira_cmdline_app", "")
+        jira_server       = snip.opt("g:jira_server", "")
+        jira_username     = snip.opt("g:jira_username", "")
+        jira_password     = snip.opt("g:jira_password", "")
+
+        p = subprocess.Popen( [ jira_cmdline_app,
+                "-s",
+                jira_server,
+                "-u",
+                jira_username,
+                "-p",
+                jira_password,
+                "-a",
+                "getFieldValue",
+                "--field",
+                "Summary",
+                "--issue",
+                ticketId],
+                stdout=subprocess.PIPE, 
+                stderr=subprocess.PIPE)
+
+        out, err = p.communicate()
+
+        if p.returncode != 0:
+            return "ERROR!\n" + err
+
+        lines = out.split("\n")
+
+        # remove the first line "Issue xxx has field 'Summary' with value"
+        if len( lines ) > 1:
+            lines.pop(0)
+            return "\n".join(lines).rstrip()
+
+    return ""
+endglobal
+
+snippet "(\w+-\d+)" "<Ticket-Id> - Summary" r
+{{JiraTicket|{{JIRA domain int}}|`!p
+snip.rv = match.group(1).upper()`}} - `!p
+if not snip.c:
+    snip.rv = get_jira_summary(match.group(1).upper(), snip)`
+$0
+endsnippet
+
+snippet jira "<Ticket-ID> - <Summary>" !
+{{JiraTicket|{{JIRA domain int}}|${1:${VISUAL:ticket-id/(\w+)(-\d+)/\U$1\E$2\}\}/}} - `!p
+m = re.match('([A-Z]+-\d+)\s*}}',t[1])
+if m and not snip.c:
+    snip.rv = get_jira_summary(m.group(1).upper(), snip)`
+$0
+endsnippet

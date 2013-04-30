@@ -1,0 +1,105 @@
+snippet requirements "<requirements ...></requirements>" !b
+<requirements fields="coverage,status,source,refinereq,linkreq,release,rationale"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:noNamespaceSchemaLocation="http://www.tresos.de/reqmgrng-1.0.xsd">
+ 
+    <reqdefBaseID reqid="${1:baseId}"/>
+ 
+    <reqdefDefaults>
+        <coverage>$2`!p from snippet_functions import complete_from_list
+snip.rv = complete_from_list(t[2], ["TEST", "SOURCE", "INFORMAL"])`</coverage>
+        <release>$3</release>
+        <status>$4`!p from snippet_functions import complete_from_list
+snip.rv = complete_from_list(t[4], ["new", "approved", "implemented", "rejected", "not_applicable"])`</status>
+        <source>`!v g:snips_author`</source>
+    </reqdefDefaults>
+ 
+    $0
+</requirements>
+endsnippet
+
+snippet reqdef "<reqdef reqid=...>...</reqdef>" !b
+<reqdef reqid="$1">`!p if t[2]:
+    snip.rv = "\n\t<coverage>"
+else:
+    snip.rv = ""`${2:c}`!p from snippet_functions import complete_from_list
+if t[2]:
+    snip.rv = complete_from_list(t[2], ["TEST", "SOURCE", "INFORMAL"]) + "</coverage>"
+else:
+    snip.rv = ""``!p if t[3]:
+    snip.rv = "\n\t<release>"
+else:
+    snip.rv = ""`${3:r}`!p if t[3]:
+    snip.rv = "</release>"
+else:
+    snip.rv = ""`
+</reqdef>
+endsnippet
+    # `status...{{^
+    # `:status:^`}}^`
+    # `source...{{^
+    # `:source:^`}}^`
+    # `refinereq...{{^
+    # `:refinereq:^`}}^`
+    # `linkreq...{{^
+    # `:linkreq:^`}}^
+    # `:description:^`
+    # `rationale...{{^
+    # `:rationale:^`}}^
+# XPT reqdef " <reqdef reqid="...">...</reqdef>
+# <reqdef reqid="`id^">`
+#     `coverage...{{^
+#     `:coverage:^`}}^`
+#     `release...{{^
+#     `:release:^`}}^`
+#     `status...{{^
+#     `:status:^`}}^`
+#     `source...{{^
+#     `:source:^`}}^`
+#     `refinereq...{{^
+#     `:refinereq:^`}}^`
+#     `linkreq...{{^
+#     `:linkreq:^`}}^
+#     `:description:^`
+#     `rationale...{{^
+#     `:rationale:^`}}^
+# </reqdef>
+# ..XPT
+# 
+snippet coverage "<coverage>...</coverage>" !b
+<coverage>${1}`!p from snippet_functions import complete_from_list
+snip.rv = complete_from_list(t[1], ["TEST", "SOURCE", "INFORMAL"])`</coverage>
+endsnippet
+
+snippet release "<release>...</release>" !b
+<release>$1</release>
+endsnippet
+
+snippet status "<status>...</status>" !b
+<status>$1`!p from snippet_functions import complete_from_list
+snip.rv = complete_from_list(t[1], ["new", "approved", "implemented", "rejected", "not_applicable"])`</status>
+endsnippet
+
+snippet source "<source>...</source>" !b
+<source>`!v g:snips_author`</source>
+endsnippet
+
+# XPT refinereq " <refinereq>...</refinereq>
+# <refinereq>`reqId^</refinereq>
+# ..XPT
+# 
+# XPT linkreq " <linkreq>...</linkreq>
+# <linkreq>`reqId^</linkreq>
+# ..XPT
+# 
+# XPT description " <desc>...</desc>
+# <desc>
+#     `description^
+# </desc>
+# ..XPT
+# 
+# XPT rationale " <rationale>...</rationale>
+# <rationale>
+#     `rationale^
+# </rationale>
+# ..XPT

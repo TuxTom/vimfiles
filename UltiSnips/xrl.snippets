@@ -1,0 +1,27 @@
+snippet entry "<entry id=...></entry>" !b
+<entry id="${1:id}">
+	<summary>${2:summary}</summary>
+	<description>${3:description}</description>`!p if t[4]:
+    snip.rv = "\n\t"
+else:
+    snip.rv=""`${4:workaround/rationale?}
+</entry>
+$0
+endsnippet
+
+snippet summary "<summary>...</summary>" !b
+<summary>${1:summary}</summary>
+endsnippet
+
+snippet description "<description>...</description>" !b
+<description>${1:description}</description>
+endsnippet
+
+snippet workaround "<workaround>...</workaround>" !b
+<workaround>${1:workaround}</workaround>
+endsnippet
+
+snippet rationale "<rationale>...</rationale>" !b
+<rationale>${1:rationale}</rationale>
+endsnippet
+

@@ -6,6 +6,9 @@ if(exists("g:loaded_vimrc_thkl2944"))
 endif
 let g:loaded_vimrc_thkl2944 = 1
 
+nmap <Leader>ve :e $MYVIMRC<CR>
+nmap <Leader>vs :unlet g:loaded_vimrc_thkl2944<CR>:source $MYVIMRC<CR>
+
 " general options {{{
 set autoindent
 set backspace=eol,start,indent
@@ -61,8 +64,8 @@ autocmd QuickFixCmdPost    l* nested lwindow
 nnoremap Q <nop>
 " }}}
 
-" disable search highlighting on <Leader>/ {{{
-nnoremap <silent> <Leader>/ :nohlsearch<CR>
+" disable search highlighting on double <Esc> {{{
+nnoremap <silent> <Esc><Esc> :nohlsearch<CR>
 " }}}
 
 " Vim7.3 specific settings {{{
@@ -101,10 +104,23 @@ if(has("win32"))
   augroup end
 
   fun! BackupVimFile() "{{{
-    if(fnamemodify(expand("%:h"), ":p") == fnamemodify(expand("~"), ":p"))
-      call DoWriteCopy(expand("$VIM/vimfiles"))
-      if(exists("$HOMEDRIVE") && exists("$HOMEPATH") && fnamemodify(expand("$HOMEDRIVE/$HOMEPATH"), ":p") != fnamemodify(expand("~"), ":p"))
-        call DoWriteCopy(expand("$HOMEDRIVE/$HOMEPATH"))
+    " TODO: check how this can be generalized
+    let nethome = fnamemodify("H:\\", ":p")
+    let userprofile = fnamemodify(expand("$USERPROFILE"), ":p")
+    let vimfilesdir = fnamemodify(expand("$VIM/vimfiles"), ":p")
+    let filedir = fnamemodify(expand("%:h"), ":p") 
+    if(filedir == nethome)
+      call DoWriteCopy(vimfilesdir)
+      call DoWriteCopy(userprofile)
+    elseif(filedir == userprofile)
+      call DoWriteCopy(vimfilesdir)
+      if(isdirectory(nethome))
+        call DoWriteCopy(nethome)
+      endif
+    elseif(filedir == vimfilesdir)
+      call DoWriteCopy(userprofile)
+      if(isdirectory(nethome))
+        call DoWriteCopy(nethome)
       endif
     endif
   endfunction "}}}
@@ -150,59 +166,100 @@ if(has("win32"))
   let g:showmarks_include="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.'`^<>[]{}()\""
   " }}}
 
-  " NeoComplCache and XPTemplate {{{
-  " let g:neocomplcache_enable_at_startup=1
-  " let g:neocomplcache_disable_auto_complete=1
-  " let g:neocomplcache_auto_completion_start_length=4
-  " let g:neocomplcache_enable_cursor_hold_i=0
-  " let g:neocomplcache_enable_smart_case=1
-  " let g:neocomplcache_enable_ignore_case=1
-  " let g:neocomplcache_enable_auto_select=1
-  " let g:neocomplcache_enable_camel_case_completion=1
-  " let g:neocomplcache_enable_underbar_completion=1
-  " let g:neocomplcache_temporary_dir=$TEMP . '\NeoComplCache'
-  " let g:neocomplcache_min_keyword_length=2
-  " let g:neocomplcache_plugin_disable={'snippets_complete' : 1}
-  " let g:neocomplcache_min_syntax_length = 3
+  " snippet engines {{{
+  let s:expand_template_key = "<C-CR>"
 
-  " if !exists('g:neocomplcache_keyword_patterns')
-  " let g:neocomplcache_keyword_patterns = {}
-  " endif
-  " let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
+  " XPTemplate (not used anymore) {{{
+  " let g:xptemplate_key=s:expand_template_key
+  " let g:xptemplate_nav_next=s:expand_template_key
+  " let g:xptemplate_nav_prev="<C-S-CR>"
+  " let g:xptemplate_fallback=s:expand_template_key
 
-  " If completion menu visible complete common string, otherwise start completion
-  " imap <silent><expr><C-Space>     pumvisible() ? "\<Plug>completeCommonString" : "\<C-x>\<C-u>\<C-p>"
+  " let g:xptemplate_always_show_pum=1
+  " let g:xptemplate_brace_complete=0
+  " let g:xptemplate_pum_tab_nav=1
+  " let g:xptemplate_strict=1
+  " let g:xptemplate_highlight='following,next'
+  " let g:xptemplate_highlight_nested=1
+  " }}}
 
-  " inoremap <expr><Plug>completeCommonString             neocomplcache#complete_common_string() . "\<C-x>\<C-u>\<C-p>"
-  " inoremap <expr><C-x><C-f>                             neocomplcache#manual_filename_complete()
-  " inoremap <expr><C-x><C-o>                             neocomplcache#manual_omni_complete()
-  " inoremap <expr><C-n>                                  pumvisible() ? "\<C-n>" : neocomplcache#manual_keyword_complete()
-  " inoremap <expr><C-BS>                                 neocomplcache#undo_completion()
+  " UltiSnips {{{
+  py import sys; import vim; sys.path.append(vim.eval("$VIM") + "/vimfiles/python")
+  
+  let g:UltiSnipsExpandTrigger=s:expand_template_key
+  let g:UltiSnipsJumpForwardTrigger=s:expand_template_key
+  let g:UltiSnipsJumpBackwardTrigger="<C-S-CR>"
+  let g:UltiSnipsRemoveSelectModeMappings = 0
 
-  " let g:xptemplate_key="<Plug>XPTExpandOrNext"
-  " let g:xptemplate_nav_next="<Plug>XPTExpandOrNext"
-  " let g:xptemplate_nav_prev="<S-Tab>"
-  let g:xptemplate_key="<C-CR>"
-  let g:xptemplate_nav_next="<C-CR>"
-  let g:xptemplate_nav_prev="<C-S-CR>"
-  let g:xptemplate_fallback="<C-CR>"
+  let g:ulti_expand_res = 0
+  let g:ulti_jump_forwards_res = 0
+  let g:ulti_jump_backwards_res = 0
 
-  let g:xptemplate_always_show_pum=1
-  let g:xptemplate_brace_complete=0
-  let g:xptemplate_pum_tab_nav=1
-  let g:xptemplate_strict=1
-  let g:xptemplate_highlight='following,next'
-  let g:xptemplate_highlight_nested=1
+  function! CR()
+    if pumvisible()
+      call UltiSnips_ExpandSnippet() 
+      if g:ulti_expand_res > 0
+        return ""
+      endif
+    endif
+    return "\<CR>"
+  endfunction
+  inoremap <CR> <C-R>=CR()<CR>
 
-  " let g:ycm_key_list_select_completion = []
-  " let g:ycm_key_list_previous_completion = []
+  function! Esc()
+    if pumvisible()
+      return "\<C-Y>"
+    endif
+    return "\<Esc>"
+  endfunction
+  inoremap <Esc> <C-R>=Esc()<CR>
 
-  " imap <expr><Tab>                                      pumvisible() ? "\<C-n>" : "\<Plug>XPTExpandOrNext"
-  " smap <expr><Tab>                                      pumvisible() ? "\<C-n>" : "\<Plug>XPTExpandOrNext"
-  " imap <expr><S-Tab>                                    pumvisible() ? "\<C-p>" : "\<S-Tab>"
-  " smap <expr><S-Tab>                                    pumvisible() ? "\<C-p>" : "\<S-Tab>"
-  " inoremap <Plug>Tab                                    <Tab>
-  " snoremap <Plug>Tab                                    <Tab>
+  function! Tab(mode)
+    if (a:mode == 'i') && pumvisible()
+      return "\<C-N>"
+    else
+      call UltiSnips_JumpForwards()
+      if g:ulti_jump_forwards_res > 0
+        return ""
+      endif
+    endif
+    if (a:mode == 's')
+      return "gv\<C-g>\<Tab>"
+    endif
+    return "\<Tab>"
+  endfunction
+  inoremap <Tab> <C-R>=Tab('i')<CR>
+  vnoremap <Tab> <Esc>i<C-R>=Tab('s')<CR>
+
+  function! STab(mode)
+    if (a:mode == 'i') && pumvisible()
+      return "\<C-P>"
+    else
+      call UltiSnips_JumpBackwards()
+      if g:ulti_jump_backwards_res > 0
+        return ""
+      endif
+    endif
+    if (a:mode == 's')
+      return "gv\<C-g>\<S-Tab>"
+    endif
+    return "\<S-Tab>"
+  endfunction
+  inoremap <S-Tab> <C-R>=STab('i')<CR>
+  snoremap <S-Tab> <Esc>i<C-R>=STab('s')<CR>
+  " function! Ulti_Expand_and_getRes()
+    " call UltiSnips_ExpandSnippet()
+    " return g:ulti_expand_res
+  " endfunction
+  " inoremap <CR> <C-R>=(pumvisible() && (Ulti_Expand_and_getRes() > 0))?"":"\n"<CR>
+
+  let g:snips_author='thkl2944'
+  " }}}
+  " }}}
+
+  " YouCompleteMe {{{
+  let g:ycm_key_list_select_completion = ['<Down>']
+  let g:ycm_key_list_previous_completion = ['<Up>']
   " }}}
 
   " NERDTree {{{
@@ -230,11 +287,6 @@ if(has("win32"))
   vmap <Leader>cm <Plug>NERDCommenterMinimal
   nmap <Leader>cs <Plug>NERDCommenterSexy
   vmap <Leader>cs <Plug>NERDCommenterSexy
-
-  " }}}
-
-  " Calendar {{{
-  let g:calendar_monday=1
 
   " }}}
 
@@ -286,24 +338,34 @@ if(has("win32"))
   let g:netrw_list_cmd = "plink.exe HOSTNAME ls -Fla "
   " }}}
 
-  " Command-T (disabled) {{{
-  " let g:CommandTAlwaysShowDotFiles = 1
-  " let g:CommandTScanDotDirectories = 1
-  " let g:CommandTMatchWindowReverse = 1
-  " let g:CommandTMaxCachedDirectories = 10
-  " }}}
-
   " CtrlP {{{
   let g:ctrlp_cache_dir = $TEMP.'/vim/ctrlp'
   let g:ctrlp_show_hidden = 1
+
+  let g:ctrlp_map = '<C-p>f'
+  nnoremap <C-p>b :CtrlPBuffer<CR>
+  nnoremap <C-p>m :CtrlPMRU<CR>
+  nnoremap <C-p> :CtrlPLastMode<CR>
   " }}}
 
   " colorschemes {{{
+  call togglebg#map("<F5>")
+  " obsolete:
   " careful, self-destroying mapping... ;-). This is required as the autoload
   " file containing the :ToggleBG command is not sourced otherwise
-  nmap <F5> :nunmap <F5><CR>:DoToggleBG<CR>
-  command! -nargs=0 DoToggleBG :call togglebg#map("<F5>")|delcommand DoToggleBG|ToggleBG
+  " nmap <F5> :nunmap <F5><CR>:DoToggleBG<CR>
+  " command! -nargs=0 DoToggleBG :call togglebg#map("<F5>")|delcommand DoToggleBG|ToggleBG
+  " }}}
 
+  " Reviews {{{
+  let g:reviewprotocol_dir = 'D:\work\reviews'
+
+  function! OpenReviewProtocol(ticketId) " {{{
+    execute "edit " . g:reviewprotocol_dir . "\\" . toupper(a:ticketId) . ".cwiki"
+  endfunction
+  " }}}
+  command! -nargs=1 ReviewProtocol call OpenReviewProtocol("<args>")
+  command! -nargs=1 RP call OpenReviewProtocol("<args>")
   " }}}
 
   if(exists('g:tools_basedir'))
@@ -321,7 +383,7 @@ if(has("win32"))
 
     " Needed for custom jira-snippets with XPTemplate {{{
     let g:jira_server = 'https://issue.ebgroup.elektrobit.com'
-    let g:jira_cmdline_app = '"' . g:tools_basedir . '\atlassian-cli-2.6.0\jira.bat"'
+    let g:jira_cmdline_app = '' . g:tools_basedir . '\atlassian-cli-2.6.0\jira.bat'
     if(exists('g:username'))
       let g:jira_username = g:username
       let g:jira_password = g:userpass
@@ -340,18 +402,18 @@ if(has("win32"))
     execute 'set grepprg=' . g:tools_basedir . '\\GNU\\bin\\grep.exe\ -nH'
     " }}}
 
-    " Taglist {{{
-    let g:Tlist_Ctags_Cmd=s:ctags_cmd
-    let g:tlist_ant_settings='ant_tlist;p:Project;t:Target;r:Property;d:Task;e:Extension-Point'
-    let g:tlist_jproperties_settings='jproperties;r:Property'
-    let g:Tlist_File_Fold_Auto_Close=1
-    let Tlist_GainFocus_On_ToggleOpen=0
-    let Tlist_Enable_Fold_Column=0
-    let Tlist_Use_Right_Window=1
-    let Tlist_WinWidth=35
-    let Tlist_Sort_Type = "name"
+    " Taglist (disabled) {{{
+    " let g:Tlist_Ctags_Cmd=s:ctags_cmd
+    " let g:tlist_ant_settings='ant_tlist;p:Project;t:Target;r:Property;d:Task;e:Extension-Point'
+    " let g:tlist_jproperties_settings='jproperties;r:Property'
+    " let g:Tlist_File_Fold_Auto_Close=1
+    " let Tlist_GainFocus_On_ToggleOpen=0
+    " let Tlist_Enable_Fold_Column=0
+    " let Tlist_Use_Right_Window=1
+    " let Tlist_WinWidth=35
+    " let Tlist_Sort_Type = "name"
 
-    nmap <Leader>T :TlistToggle<CR>
+    " nmap <Leader>T :TlistToggle<CR>
     " }}}
   endif
 
@@ -363,6 +425,48 @@ if(has("win32"))
   endif
   " let g:EclimProjectTreeAutoOpen=1
   " let g:EclimShowErrors=1
+  " }}}
+
+  " NeoComplCache (disabled) {{{
+  " let g:neocomplcache_enable_at_startup=1
+  " let g:neocomplcache_disable_auto_complete=1
+  " let g:neocomplcache_auto_completion_start_length=4
+  " let g:neocomplcache_enable_cursor_hold_i=0
+  " let g:neocomplcache_enable_smart_case=1
+  " let g:neocomplcache_enable_ignore_case=1
+  " let g:neocomplcache_enable_auto_select=1
+  " let g:neocomplcache_enable_camel_case_completion=1
+  " let g:neocomplcache_enable_underbar_completion=1
+  " let g:neocomplcache_temporary_dir=$TEMP . '\NeoComplCache'
+  " let g:neocomplcache_min_keyword_length=2
+  " let g:neocomplcache_plugin_disable={'snippets_complete' : 1}
+  " let g:neocomplcache_min_syntax_length = 3
+
+  " if !exists('g:neocomplcache_keyword_patterns')
+  " let g:neocomplcache_keyword_patterns = {}
+  " endif
+  " let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
+
+  " If completion menu visible complete common string, otherwise start completion
+  " imap <silent><expr><C-Space>     pumvisible() ? "\<Plug>completeCommonString" : "\<C-x>\<C-u>\<C-p>"
+
+  " inoremap <expr><Plug>completeCommonString             neocomplcache#complete_common_string() . "\<C-x>\<C-u>\<C-p>"
+  " inoremap <expr><C-x><C-f>                             neocomplcache#manual_filename_complete()
+  " inoremap <expr><C-x><C-o>                             neocomplcache#manual_omni_complete()
+  " inoremap <expr><C-n>                                  pumvisible() ? "\<C-n>" : neocomplcache#manual_keyword_complete()
+  " inoremap <expr><C-BS>                                 neocomplcache#undo_completion()
+  " }}}
+
+  " Calendar (disabled) {{{
+  " let g:calendar_monday=1
+
+  " }}}
+
+  " Command-T (disabled) {{{
+  " let g:CommandTAlwaysShowDotFiles = 1
+  " let g:CommandTScanDotDirectories = 1
+  " let g:CommandTMatchWindowReverse = 1
+  " let g:CommandTMaxCachedDirectories = 10
   " }}}
 
   " Vimwiki (disabled) {{{
