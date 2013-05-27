@@ -2,7 +2,8 @@ snippet entry "<entry id=...></entry>" !b
 <entry id="${1:id}">
 	<summary>${2:summary}</summary>
 	<description>${3:description}</description>`!p if t[4]:
-    snip.rv = "\n\t"
+    snip >> 1
+    snip += ""
 else:
     snip.rv=""`${4:workaround/rationale?}
 </entry>

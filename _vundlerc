@@ -15,17 +15,15 @@ Bundle 'tpope/vim-surround'
 Bundle 'tpope/vim-repeat'
 Bundle 'tpope/vim-fugitive'
 Bundle 'gregsexton/gitv'
-" Bundle 'git-time-lapse'
-Bundle 'vcscommand.vim'
 Bundle 'AnsiEsc.vim'
 Bundle 'thinca/vim-visualstar'
 Bundle 'nathanaelkane/vim-indent-guides'
 
 Bundle 'Lokaltog/vim-powerline'
+" Bundle 'Lokaltog/powerline'
+" exec 'set rtp+=' . g:bundle_dir . '\powerline\powerline\bindings\vim'
 
-" Bundle 'Shougo/neocomplcache'
 Bundle 'Valloric/YouCompleteMe'
-" Bundle 'drmingdrmer/xptemplate-dist'
 Bundle 'SirVer/ultisnips'
 
 Bundle 'scrooloose/nerdtree'
@@ -33,38 +31,25 @@ Bundle 'scrooloose/nerdcommenter'
 
 Bundle 'jistr/vim-nerdtree-tabs'
 
-" Bundle 'scrooloose/syntastic'
-
 Bundle 'grep.vim'
 
-" Bundle 'vimwiki'
-" Bundle 'calendar.vim--Matsumoto'
-
-" Bundle 'taglist.vim'
-
 Bundle 'confluencewiki.vim'
+Bundle 'atdt/vim-mediawiki'
 
 Bundle 'Raimondi/delimitMate'
+Bundle 'Raimondi/YAIFA'
 
 Bundle 'scratch'
 
-" Bundle 'utl.vim'
-" Bundle 'chrisbra/NrrwRgn'
-" Bundle 'vim-orgmode'
-
-" Bundle 'wincent/Command-T'
-
 Bundle 'kien/ctrlp.vim'
+Bundle 'tacahiroy/ctrlp-funky'
 
 Bundle 'othree/xml.vim'
 
 Bundle 'PProvost/vim-ps1'
 
-" Bundle 'chreekat/vim-paren-crosshairs'
-
 Bundle 'altercation/vim-colors-solarized'
 
-" Bundle 'hlissner/vim-multiedit'
-Bundle 'terryma/vim-multiple-cursors'
+Bundle 'sjl/splice.vim'
 
 filetype plugin indent on

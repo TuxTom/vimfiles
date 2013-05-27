@@ -40,7 +40,7 @@ def get_jira_summary(ticketId, snip):
 endglobal
 
 snippet "(\w+-\d+)" "<Ticket-Id> - Summary" r
-{{JiraTicket|{{JIRA domain int}}|`!p
+{{JiraIntTicket|`!p
 snip.rv = match.group(1).upper()`}} - `!p
 if not snip.c:
     snip.rv = get_jira_summary(match.group(1).upper(), snip)`
@@ -48,7 +48,7 @@ $0
 endsnippet
 
 snippet jira "<Ticket-ID> - <Summary>" !
-{{JiraTicket|{{JIRA domain int}}|${1:${VISUAL:ticket-id/(\w+)(-\d+)/\U$1\E$2\}\}/}} - `!p
+{{JiraIntTicket|${1:${VISUAL:ticket-id/(\w+)(-\d+)/\U$1\E$2\}\}/}} - `!p
 m = re.match('([A-Z]+-\d+)\s*}}',t[1])
 if m and not snip.c:
     snip.rv = get_jira_summary(m.group(1).upper(), snip)`
