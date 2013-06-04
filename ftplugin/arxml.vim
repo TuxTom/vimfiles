@@ -13,16 +13,11 @@ if has("folding")
     endif
 
     let foldtext = matchstr( getline( v:foldstart ), '\s*<[-A-Z]\+' )
-    let shortname = ""
-    for i in range(1,5)
-      let shortname = matchstr( getline( v:foldstart + i ), '<SHORT-NAME>\zs[-_A-Za-z0-9]\+\ze<\/SHORT-NAME>' )
-      if( shortname != "" )
-        " echomsg "Short name found: " . shortname
-        let foldtext .= ' "' . shortname . '"'
-        " echomsg "New foldtext: " . foldtext
-        break;
-      endif
-    endfor
+    let shortname = matchstr( join( getline( v:foldstart + 1, v:foldstart + 5 ) ), '^\s*<SHORT-NAME>\zs[-_A-Za-z0-9]\+\ze<\/SHORT-NAME>' )
+    if( shortname != "" )
+      let foldtext .= ' "' . shortname . '"'
+    endif
+    let foldtext .= '>'
 
     let foldtext .= ' (' . ( v:foldend-v:foldstart ) . ' lines) '
     let linelength = winwidth(0) - &foldcolumn
