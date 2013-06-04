@@ -352,10 +352,18 @@ if(has("win32"))
       let g:Powerline_colorscheme = 'solarized256'
       let g:Powerline_theme = 'custom' " removed the branch info and unused plugin stuff from the default theme
 
-      " let g:powerline_config_overrides.dividers.left.hard = '⮀ '
-      " let g:powerline_config_overrides.dividers.left.soft = '⮁ '
-      " let g:powerline_config_overrides.dividers.right.hard = ' ⮂'
-      " let g:powerline_config_overrides.dividers.right.soft = ' ⮃' 
+      " let g:powerline_config_overrides = {
+            " \ 'dividers': {
+              " \ 'left': {
+                " \ 'hard': '⮀ ',
+                " \ 'soft': '⮁ '
+              " \ },
+              " \ 'right': {
+                " \ 'hard': ' ⮂',
+                " \ 'soft': ' ⮃' 
+              " \ }
+            " \ }
+          " \ }
 
       " let g:Powerline_theme = 'solarized256'
       " let g:Powerline_theme="skwp"
@@ -485,11 +493,11 @@ if(has("win32"))
       if !exists('g:EclimStartOnStartup')
         augroup DisableEclim
           au VimEnter * EclimDisable
-          augroup end
-          endif
-          " let g:EclimProjectTreeAutoOpen=1
-          " let g:EclimShowErrors=1
-          " }}}
+        augroup end
+      endif
+      " let g:EclimProjectTreeAutoOpen=1
+      " let g:EclimShowErrors=1
+      " }}}
 
           " NeoComplCache (disabled) {{{
           " let g:neocomplcache_enable_at_startup=1
