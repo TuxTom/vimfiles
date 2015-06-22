@@ -3,54 +3,53 @@
 set nocompatible
 filetype off
 
-execute "set rtp+=" . g:tools_basedir . '\vim\bundles\vundle'
-call vundle#rc(g:tools_basedir . '\vim\bundles')
+execute "set rtp+=" . g:tools_basedir . '\vim\bundles\Vundle.vim'
+call vundle#begin(g:tools_basedir . '\vim\bundles')
 
-Bundle 'gmarik/vundle'
+Plugin 'gmarik/Vundle.vim'
 
-Bundle 'CmdlineComplete'
-Bundle 'help.vim'
-Bundle 'matchit.zip'
-Bundle 'tpope/vim-surround'
-Bundle 'tpope/vim-repeat'
-Bundle 'tpope/vim-fugitive'
-Bundle 'gregsexton/gitv'
-Bundle 'int3/vim-extradite'
-Bundle 'AnsiEsc.vim'
-Bundle 'thinca/vim-visualstar'
-Bundle 'nathanaelkane/vim-indent-guides'
+Plugin 'CmdlineComplete'
+Plugin 'matchit.zip'
+Plugin 'tpope/vim-surround'
+Plugin 'tpope/vim-repeat'
+Plugin 'tpope/vim-fugitive'
+Plugin 'gregsexton/gitv'
+Plugin 'int3/vim-extradite'
+Plugin 'AnsiEsc.vim'
+Plugin 'thinca/vim-visualstar'
+Plugin 'nathanaelkane/vim-indent-guides'
 
-Bundle 'Lokaltog/vim-powerline'
-" Bundle 'Lokaltog/powerline'
-" exec 'set rtp+=' . g:bundle_dir . '\powerline\powerline\bindings\vim'
+Plugin 'bling/vim-airline'
 
-Bundle 'Valloric/YouCompleteMe'
-Bundle 'SirVer/ultisnips'
+Plugin 'SirVer/ultisnips'
+Plugin 'jhradilek/vim-snippets', {'name': 'vim-snippets_jhradilek'}
+Plugin 'honza/vim-snippets', {'name': 'vim-snippets_honza'}
 
-Bundle 'scrooloose/nerdtree'
-Bundle 'scrooloose/nerdcommenter'
+Plugin 'scrooloose/nerdcommenter'
 
-Bundle 'jistr/vim-nerdtree-tabs'
+Plugin 'confluencewiki.vim'
+Plugin 'atdt/vim-mediawiki'
 
-Bundle 'grep.vim'
+Plugin 'Raimondi/delimitMate'
+Plugin 'Raimondi/YAIFA'
 
-Bundle 'confluencewiki.vim'
-Bundle 'atdt/vim-mediawiki'
+Plugin 'scratch'
 
-Bundle 'Raimondi/delimitMate'
-Bundle 'Raimondi/YAIFA'
+Plugin 'Shougo/neocomplete.vim'
+Plugin 'Shougo/vimproc.vim'
+Plugin 'Shougo/unite.vim'
 
-Bundle 'scratch'
+Plugin 'othree/xml.vim'
 
-Bundle 'kien/ctrlp.vim'
-Bundle 'tacahiroy/ctrlp-funky'
+Plugin 'PProvost/vim-ps1'
 
-Bundle 'othree/xml.vim'
+Plugin 'altercation/vim-colors-solarized'
 
-Bundle 'PProvost/vim-ps1'
+Plugin 'chrisbra/csv.vim'
 
-Bundle 'altercation/vim-colors-solarized'
+Plugin 'kshenoy/vim-signature'
 
-Bundle 'sjl/splice.vim'
+Plugin 'deris/vim-shot-f'
 
+call vundle#end()
 filetype plugin indent on

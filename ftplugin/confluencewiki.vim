@@ -23,10 +23,7 @@ fun! s:postAsJiraComment(...) range "{{{
     return 1
   endif
 
-  let s:result = system( g:jira_cmdline_app . " -s " . g:jira_server . " -u " . g:jira_username . " -p " . g:jira_password . " -a addComment " . " --issue " . s:issue . " --file - ", s:commentText )
-  if(v:shell_error)
-    echoerr "Posting as JIRA comment failed: " . s:result
-  endif
+  execute 'py from jira_functions import post_jira_comment; post_jira_comment(''' . g:jira_server . ''',''' . g:jira_username . ''',''' . g:jira_password . ''',''' . s:issue . ''',"""' s:commentText . '""")'
 endfunction "}}}
 
 command -buffer -nargs=? -range=% PostAsJiraComment <line1>,<line2>call s:postAsJiraComment("<args>")

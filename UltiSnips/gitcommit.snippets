@@ -1,18 +1,18 @@
 global !p
-from snippet_functions import get_jira_summary, complete_from_list
+from snippet_functions import *
 endglobal
 
 snippet "(\w+-\d+)" "<Ticket-Id> - Summary" r
 `!p
 snip.rv = match.group(1).upper()` - `!p
 if not snip.c:
-    snip.rv = get_jira_summary(match.group(1).upper(), snip)`
+    snip.rv = snip_get_jira_summary(match.group(1).upper(), snip)`
 $0
 endsnippet
 
 snippet jira "<Ticket-ID> - <Summary>" !
 ${1:${VISUAL:ticket-id/(\w+)(-\d+)/\U$1\E$2 -/}} `!p
 if re.match('[A-Z]+-\d+\s*-',t[1]):
-    snip.rv = get_jira_summary(t[1].upper()[:-1].rstrip(), snip)`
+    snip.rv = snip_get_jira_summary(t[1].upper()[:-1].rstrip(), snip)`
 $0
 endsnippet
