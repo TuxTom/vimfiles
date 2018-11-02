@@ -10,7 +10,7 @@ if not snip.c:
 $0
 endsnippet
 
-snippet jira "<Ticket-ID> - <Summary>" !
+snippet jira "<Ticket-ID> - <Summary>"
 ${1:${VISUAL:ticket-id/(\w+)(-\d+)/\U$1\E$2 -/}} `!p
 if re.match('[A-Z]+-\d+\s*-',t[1]):
     snip.rv = snip_get_jira_summary(t[1].upper()[:-1].rstrip(), snip)`

@@ -17,25 +17,26 @@ if re.match('[A-Z]+-\d+\s*-',t[1]):
 $0
 endsnippet
 
-snippet reviewprotocol "-- Review Protocol v2.0 --" !b
-------------------------------------------------------------------------
-Review Protocol v2.0
-------------------------------------------------------------------------
-Reviewer: `!v g:snips_author`
-------------------------------------------------------------------------
-Date:     `!v strftime("%Y-%m-%d %H:%M")`
-------------------------------------------------------------------------
-Ticket:   ${1:`!v expand('%:t:r')`}
-------------------------------------------------------------------------
-A) Comments:
-${2}
-------------------------------------------------------------------------
-B) To be fixed/explained by developer:
-${3}
-------------------------------------------------------------------------
-C) Already fixed by reviewer:
-${4}
-------------------------------------------------------------------------
-Result:   ${5}`!p snip.rv = snip_complete_from_list(t[5], ["REVIEW OK", "FIX NEEDED", "RE-REVIEW NEEDED"])`
-------------------------------------------------------------------------
+snippet reviewprotocol "Review Protocol" !b
+----
+
+${1:<summary>}
+
+----
+${2/^(R|N)$|.*/(?1:\(\/\):\(x\))/} TAG_$2${2/^((R)|(N))$|(.*)/(?0::TODO)(?2:EVIEWED)(?3:O)/}_SRC          (Sourcecode/Demo/Other)
+${3/^(R|N)$|.*/(?1:\(\/\):\(x\))/} TAG_$3${3/^((R)|(N))$|(.*)/(?0::TODO)(?2:EVIEWED)(?3:O)/}_TESTSRC      (Test Sourcecode)
+${4/^(R|N)$|.*/(?1:\(\/\):\(x\))/} TAG_$4${4/^((R)|(N))$|(.*)/(?0::TODO)(?2:EVIEWED)(?3:O)/}_TESTSPEC     (Test Specification)
+${5/^(R|N)$|.*/(?1:\(\/\):\(x\))/} TAG_$5${5/^((R)|(N))$|(.*)/(?0::TODO)(?2:EVIEWED)(?3:O)/}_DOC_CONTENT  (User documentation)
+${6/^(R|N)$|.*/(?1:\(\/\):\(x\))/} TAG_$6${6/^((R)|(N))$|(.*)/(?0::TODO)(?2:EVIEWED)(?3:O)/}_REQUIREMENTS (Requirements)
+${7/^(R|N)$|.*/(?1:\(\/\):\(x\))/} TAG_$7${7/^((R)|(N))$|(.*)/(?0::TODO)(?2:EVIEWED)(?3:O)/}_RELNOTES     (Releasenotes)
+${8/^(R|N)$|.*/(?1:\(\/\):\(x\))/} TAG_$8${8/^((R)|(N))$|(.*)/(?0::TODO)(?2:EVIEWED)(?3:O)/}_NOTEWORTHY   (Noteworthy)
+----
+endsnippet
+
+snippet summaryOK "Review [...] was done, ticket can be closed."
+_Review according to review objectives and guidelines in http://subversion.ebgroup.elektrobit.com/svn/autosar/asc_Project/trunk/doc/project/management/strategy/software_construction_guidelines.docx?p=5438 was done, this ticket can be closed._
+endsnippet
+
+snippet summaryFindings "Review [...] was done, uncritical findings still remain."
+_Review according to review objectives and guidelines in http://subversion.ebgroup.elektrobit.com/svn/autosar/asc_Project/trunk/doc/project/management/strategy/software_construction_guidelines.docx?p=5438 was done, and the mentioned uncritical findings still remain. Ticket can be closed, suggested improvements may be planned separately._ 
 endsnippet
