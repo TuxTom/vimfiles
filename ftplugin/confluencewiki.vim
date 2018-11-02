@@ -23,7 +23,7 @@ fun! s:postAsJiraComment(...) range "{{{
     return 1
   endif
 
-  execute 'py from jira_functions import post_jira_comment; post_jira_comment(''' . g:jira_server . ''',''' . g:jira_username . ''',''' . g:jira_password . ''',''' . s:issue . ''',"""' s:commentText . '""")'
+  execute 'py from jira_functions import post_jira_comment; post_jira_comment(''' . g:jira_server . ''',''' . g:jira_username . ''',''' . substitute(g:jira_password,'\\','\\\\','g') . ''',''' . s:issue . ''',"""' s:commentText . '""")'
 endfunction "}}}
 
 command -buffer -nargs=? -range=% PostAsJiraComment <line1>,<line2>call s:postAsJiraComment("<args>")

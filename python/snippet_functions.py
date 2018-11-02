@@ -1,4 +1,5 @@
 from jira_functions import get_jira_summary
+import vim
 
 def snip_get_jira_summary(ticketId, snip):
     if ticketId:
@@ -12,6 +13,16 @@ def snip_get_jira_summary(ticketId, snip):
 
 def snip_complete_from_list(value, opts):
     result = [opt[len(value):] for opt in opts if opt.startswith(value)]
+
+    if len(result) == 0:
+        return "{!" + "|".join(opts) + "!}"
+    elif len(result) == 1:
+        return result[0]
+    else:
+        return "{" + "|".join(result) + "}"
+
+def snip_complete_from_list_caseinsensitive(value, opts):
+    result = [opt[len(value):] for opt in opts if opt[:len(value)].lower() == value.lower()]
 
     if len(result) == 0:
         return "{!" + "|".join(opts) + "!}"

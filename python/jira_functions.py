@@ -1,5 +1,9 @@
+# workaround hack for some weird problem with jira, current subprocess and vim launched from the commandline
+import os
+os.environ['BRANCH_NAME'] = 'release'
+
 from jira import JIRA
-from jira.utils import JIRAError
+from jira.exceptions import JIRAError
 
 import requests
 requests.packages.urllib3.disable_warnings()

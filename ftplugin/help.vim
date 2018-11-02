@@ -23,10 +23,10 @@ augroup help
 augroup END
 
 " jump to next link
-nmap <buffer> <Tab> /\|\S\+\|<CR>l
+nmap <buffer> <Tab> /\|\S\+\|<CR>:nohlsearch<CR>l
 
 " jump to previous link
-nmap <buffer> <S-Tab> h?\|\S\+\|<CR>l
+nmap <buffer> <S-Tab> h?\|\S\+\|<CR>:nohlsearch<CR>l
 
 " follow link with <CR>
 nmap <buffer> <CR> <C-]>
