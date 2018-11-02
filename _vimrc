@@ -6,37 +6,44 @@ if(exists("g:loaded_vimrc_thkl2944"))
 endif
 let g:loaded_vimrc_thkl2944 = 1
 
-nmap <Leader>ve :e $VIM/vimfiles/_vimrc<CR>
-nmap <Leader>vs :unlet g:loaded_vimrc_thkl2944<CR>:source $VIM/vimfiles/_vimrc<CR>
-
 " general options {{{
 set autoindent
 set backspace=eol,start,indent
 set completeopt=menuone,preview
+set concealcursor=
+set conceallevel=2
 set confirm
+if(!has('nvim'))
+  set cryptmethod=blowfish
+endif
+set cursorline
+set cursorcolumn
 set diffopt=filler,iwhite,vertical
 set display=lastline
 set encoding=utf-8
 set expandtab
 set fileformats=unix,dos
-set foldcolumn=5
-
+set foldcolumn=2
+set foldlevelstart=99
 set formatoptions+=roq
 set formatoptions-=tc
 set gdefault
 set helplang=en
 set hidden
+set hlsearch
+set inccommand=split
 set incsearch
 set iskeyword+=-
 set laststatus=2
+set lazyredraw
 set linebreak
 set linespace=0
 set listchars=eol:¶,tab:▸\ ,trail:·
 set nocscopetag
-set hlsearch
 set noignorecase
 set number
 set numberwidth=4
+set scrolljump=5
 set scrolloff=3
 set shiftwidth=4
 set shortmess=aOtTWI
@@ -46,18 +53,48 @@ set smartindent
 set smarttab
 set splitbelow
 set splitright
+set tabpagemax=100
 set tabstop=4
 set tildeop
+set undofile
 set updatetime=1000
 set whichwrap=<,>,[,],b,s
+set wildignore+=.git
 set wildignore+=.svn
 set wildignore+=CVS
-set wildignore+=.git
 set wildmode=list:longest,full
 set wrap
-let mapleader="\\"
-let maplocalleader="|"
+let mapleader="\<Space>"
+let maplocalleader=","
 " }}}
+
+if(!has('nvim'))
+  packadd! editexisting
+  packadd! matchit
+endif
+
+function! s:absolute(path)
+  return substitute(fnamemodify(expand(substitute(a:path,"/","\\","g")),":p"),"\\","/","g")
+endfunction
+
+if(has('nvim'))
+  let g:vimfilesdir = s:absolute("$VIM/../../../vimfiles/")
+else
+  let g:vimfilesdir = s:absolute("$VIM/vimfiles/")
+endif
+
+let g:vimrc = g:vimfilesdir . "_vimrc"
+let g:bundlerc = g:vimfilesdir . "_deinrc"
+
+if(has('nvim'))
+  let g:python_host_prog  = 'C:\Tools\Python27\python'
+  let g:python3_host_prog = 'C:\Tools\Python36\python'
+endif
+
+execute "nmap <Leader>ve :e " . g:vimrc . "<CR>"
+execute "nmap <Leader>vs :unlet g:loaded_vimrc_thkl2944<CR>:source " . g:vimrc . "<CR>"
+execute "nmap <Leader>be :e " . g:bundlerc . "<CR>"
+execute "nmap <Leader>bs :source " . g:bundlerc . "<CR>"
 
 " automatically open/close the quickfix/location window {{{
 autocmd QuickFixCmdPost [^l]* nested cwindow
@@ -72,13 +109,24 @@ nnoremap Q <nop>
 nnoremap <silent> <Esc><Esc> :nohlsearch<CR>
 " }}}
 
-" Vim7.3 specific settings {{{
-if(v:version >= 703)
-  set cryptmethod=blowfish
-  set conceallevel=2
-  set concealcursor=
-  set undofile
+" Copy file name or path to clipboard via <A-S-Insert> or <A-Insert> respectively {{{
+nnoremap <A-Insert> :let @*=substitute(expand("%:p"), "/", "\\", "g")<CR>
+nnoremap <A-S-Insert> :let @*=substitute(expand("%:t"), "/", "\\", "g")<CR>
+" }}}
+
+" Terminal mode mappings {{{
+if(has('nvim'))
+  tnoremap <Esc> <C-\><C-n>
 endif
+" }}}
+
+" Try to use powershell as shell (disabled) {{{
+" if executable("powershell")
+  " set shell=powershell
+  " set shellcmdflag=-c
+  " set shellquote=\"
+  " set shellxquote=
+" endif
 " }}}
 
 " Try to load file containing passwords {{{
@@ -93,15 +141,16 @@ nnoremap <Leader><Leader>e :e <C-r>*<CR>
 nnoremap <Leader><Leader>d :diffsplit <C-r>*<CR>
 
 if(has("win32"))
-  let g:tools_basedir = 'C:\Tools'
-
+  let g:tools_basedir = 'C:\Tools\'
+  let g:caches_dir = s:absolute(g:tools_basedir . 'vim\caches')
+  
   if(exists('g:tools_basedir'))
     " Load bundle data for Vundle
-    exec "source " . expand("<sfile>:p:h") . "/_vundlerc"
- endif
+    exec "source " . g:bundlerc
+  endif
 
   " Use standard Windows clipboard for copying/yanking {{{
-  set clipboard=unnamed
+  set clipboard=unnamed,unnamedplus
   " }}}
 
   " Don't clutter working directory with swap or undo files... {{{
@@ -114,11 +163,9 @@ if(has("win32"))
   " }}}
 
   " Maximize GUI on open {{{
-  au GUIEnter * simalt ~x
-  " }}}
-
-  " indent_guides {{{
-  let g:indent_guides_enable_on_vim_startup = 0
+  if(!has('nvim'))
+    au GUIEnter * simalt ~x
+  endif
   " }}}
 
   " snippet engine / autocompletion {{{
@@ -126,7 +173,7 @@ if(has("win32"))
 
    " UltiSnips {{{
   let g:UltiSnipsUsePythonVersion=2
-  py import sys; import vim; sys.path.append(vim.eval("$VIM") + "/vimfiles/python")
+  py import sys; import vim; sys.path.append(vim.vars['vimfilesdir'] + "python")
 
   let g:UltiSnipsExpandTrigger=s:expand_template_key
   let g:UltiSnipsJumpForwardTrigger=s:expand_template_key
@@ -143,65 +190,132 @@ if(has("win32"))
   let g:snips_author='thkl2944'
   " }}}
 
-  " neocomplete {{{
-	let g:neocomplete#enable_at_startup = 1
-  let g:neocomplete#enable_auto_select = 1
-  let g:neocomplete#enable_auto_delimiter = 1
-  " }}}
-  
+  if(!has('nvim'))
+    " {{{
+    " neocomplete {{{
+    let g:neocomplete#enable_at_startup = 1
+    let g:neocomplete#enable_auto_delimiter = 1
+    let g:neocomplete#auto_completion_start_length = 3
+    let g:neocomplete#enable_camel_case = 1
+    let g:neocomplete#data_directory = $TEMP.'/vim/neocomplete'
+    " }}}
+
+    " function! CR() {{{
+    function! CR()
+      if pumvisible()
+        " call UltiSnips#ExpandSnippet()
+        " if g:ulti_expand_res > 0
+          " return ""
+        " else
+          return neocomplete#close_popup()
+        " endif
+      endif
+      return "\<CR>"
+    endfunction
+    inoremap <CR> <C-R>=CR()<CR>
+
+    inoremap <expr><C-h> neocomplete#smart_close_popup()."\<C-h>"
+    inoremap <expr><BS> neocomplete#smart_close_popup()."\<C-h>"
+
+    inoremap <expr><C-Space> neocomplete#start_manual_complete()
+    inoremap <expr><A-Space> neocomplete#start_manual_complete('ultisnips')
+    " }}}
+    " }}}
+  else
+    " {{{
+    " deoplete {{{
+    let g:deoplete#enable_at_startup = 1
+    " let g:neocomplete#enable_auto_delimiter = 1
+    " let g:neocomplete#auto_completion_start_length = 3
+    " let g:neocomplete#enable_camel_case = 1
+    " let g:neocomplete#data_directory = $TEMP.'/vim/neocomplete'
+    " }}}
+
+    " function! CR() {{{
+    function! CR()
+      if pumvisible()
+        " call UltiSnips#ExpandSnippet()
+        " if g:ulti_expand_res > 0
+          " return ""
+        " else
+          return deoplete#close_popup()
+        " endif
+      endif
+      return "\<CR>"
+    endfunction
+    inoremap <CR> <C-R>=CR()<CR>
+
+    inoremap <expr><C-h> deoplete#smart_close_popup()."\<C-h>"
+    inoremap <expr><BS> deoplete#smart_close_popup()."\<C-h>"
+
+    inoremap <expr><C-Space> deoplete#manual_complete()
+    inoremap <expr><A-Space> deoplete#manual_complete('ultisnips')
+    " }}}
+    " }}}
+  endif
+
   " common mappings and functions {{{
-  function! CR()
-    if pumvisible()
-      call UltiSnips#ExpandSnippet()
-      if g:ulti_expand_res > 0
-        return ""
-      else
-        return neocomplete#close_popup()
+  function! ExpandIfSnippet()
+    if exists('v:completed_item')
+      if empty(v:completed_item)
+        return
+      endif
+      " echomsg "Completion done: " . v:completed_item.menu
+      if (match(v:completed_item.menu, '^\[US\]') != -1)
+        " echomsg "Attempting to expand " . v:completed_item.word
+        call UltiSnips#ExpandSnippet()
       endif
     endif
-    return "\<CR>"
-  endfunction
-  inoremap <CR> <C-R>=CR()<CR>
+  endf
+
+  augroup Completion
+    au!
+    au CompleteDone * call ExpandIfSnippet()
+  augroup END
 
   function! Tab(mode)
+    call UltiSnips#JumpForwards()
+    if g:ulti_jump_forwards_res > 0
+      return ""
+    endif
+
     if (a:mode == 'i') && pumvisible()
       return "\<C-N>"
-    else
-      call UltiSnips#JumpForwards()
-      if g:ulti_jump_forwards_res > 0
-        return ""
-      endif
     endif
+
     if (a:mode == 's')
       return "gv\<C-g>\<Tab>"
+    elseif (a:mode == 'n')
+      return "\<Esc>\<Tab>"
     endif
+
     return "\<Tab>"
   endfunction
   inoremap <Tab> <C-R>=Tab('i')<CR>
   vnoremap <Tab> <Esc>i<C-R>=Tab('s')<CR>
+  nnoremap <Tab> a<C-R>=Tab('n')<CR>
 
   function! STab(mode)
+    call UltiSnips#JumpBackwards()
+    if g:ulti_jump_backwards_res > 0
+      return ""
+    endif
+
     if (a:mode == 'i') && pumvisible()
       return "\<C-P>"
-    else
-      call UltiSnips#JumpBackwards()
-      if g:ulti_jump_backwards_res > 0
-        return ""
-      endif
     endif
+
     if (a:mode == 's')
       return "gv\<C-g>\<S-Tab>"
+    elseif (a:mode == 'n')
+      return "\<Esc>\<S-Tab>"
     endif
+
     return "\<S-Tab>"
   endfunction
   inoremap <S-Tab> <C-R>=STab('i')<CR>
   snoremap <S-Tab> <Esc>i<C-R>=STab('s')<CR>
-
-  inoremap <expr><C-h> neocomplete#smart_close_popup()."\<C-h>"
-  inoremap <expr><BS> neocomplete#smart_close_popup()."\<C-h>"
-
-  inoremap <expr><C-Space> neocomplete#start_manual_complete()
-  inoremap <expr><A-Space> neocomplete#start_manual_complete('ultisnips')
+  nnoremap <S-Tab> a<C-R>=STab('n')<CR>
   " }}}
   " }}}
 
@@ -250,11 +364,16 @@ if(has("win32"))
 
   " vim-airline {{{
   let g:airline_inactive_collapse=0
+  let g:airline_skip_empty_sections=1
   let g:airline_theme='solarized'
   let g:airline_left_sep = '⮀'
   let g:airline_left_alt_sep = '⮁'
   let g:airline_right_sep = '⮂'
   let g:airline_right_alt_sep = '⮃'
+
+  " let g:airline#extensions#tabline#enabled = 1
+  " let g:airline#extensions#tabline#show_splits = 1
+  " let g:airline#extensions#tabline#formatter = 'unique_tail_improved'
 
   if !exists('g:airline_symbols')
     let g:airline_symbols = {}
@@ -266,21 +385,22 @@ if(has("win32"))
   let g:airline#extensions#whitespace#symbol = '☼'
   " }}}
 
-  " colorschemes {{{
-  call togglebg#map("<F5>")
+  " taboo.vim {{{
+  let g:taboo_tab_format = " %f%m%U "
+  let g:taboo_renamed_tab_format = " [%l]%m%U "
   " }}}
 
   " Reviews {{{
-  let g:reviewprotocol_dir = 'D:\work\reviews'
+  let g:reviewprotocol_dir = 'D:\work\reviews\'
 
   function! OpenReviewProtocol(ticketId) " {{{
-    execute "edit " . g:reviewprotocol_dir . "\\" . toupper(a:ticketId) . ".cwiki"
+    execute "edit " . g:reviewprotocol_dir . toupper(a:ticketId) . ".cwiki"
   endfunction
   " }}}
   function! ReviewProtocolComplete(A,L,P) " {{{
-    let files = glob(g:reviewprotocol_dir . '\' . toupper(a:A) . '*.cwiki', 1, 1)
+    let files = glob(g:reviewprotocol_dir . toupper(a:A) . '*.cwiki', 1, 1)
     let result = []
-    let startidx = strlen(g:reviewprotocol_dir) + 1
+    let startidx = strlen(g:reviewprotocol_dir)
     let endidx = -(strlen('.cwiki') + 1)
     for file in files
       let result += [file[startidx : endidx]]
@@ -294,8 +414,12 @@ if(has("win32"))
 
   if(exists('g:tools_basedir'))
     " Setup curl {{{
-    let g:netrw_http_cmd=g:tools_basedir . '\Curl\curl.exe -o'
+    let g:netrw_http_cmd = s:absolute(g:tools_basedir . 'Curl\curl.exe') . ' -o'
     " }}}"
+
+    " Setup ruby {{{
+    let g:ruby_host_prog = s:absolute(g:tools_basedir . 'Ruby24-x64\bin\neovim-ruby-host.bat')
+    " }}}
 
     " Needed for custom jira-snippets {{{
     let g:jira_server = 'https://issue.ebgroup.elektrobit.com'
@@ -305,27 +429,41 @@ if(has("win32"))
     endif
     " }}}
 
-    " Unite {{{
-    let g:unite_data_directory = $TEMP.'/vim/unite'
-    let g:unite_enable_start_insert = 1
-    let g:unite_enable_smart_case = 1
-    let g:unite_source_rec_git_command = substitute( g:tools_basedir . '\Git\bin\git.exe', '\', '\\\\', 'g' )
-    call unite#filters#matcher_default#use(['matcher_fuzzy'])
-    call unite#custom#source('buffer,file_rec/async,file_rec,file,directory,directory_rec', 'sorters', 'sorter_rank')
-    call unite#custom#profile('files,directories,buffers,changes,history,sources', 'context.ignorecase', 1)
-    call unite#custom#profile('files,directories,buffers,changes,history,sources', 'context.smartcase', 1)
-
-    nnoremap <C-p>f :Unite -auto-preview -no-split -buffer-name=files file<CR>
-    nnoremap <C-p>d :Unite -no-split -buffer-name=directories directory<CR>
-    nnoremap <C-p>b :Unite -auto-preview -no-split -buffer-name=buffers buffer<CR>
-
-    nnoremap <C-p>i :Unite -auto-preview -no-split -buffer-name=git file_rec/git<CR>
-    nnoremap <C-p>c :Unite -auto-preview -no-split -buffer-name=changes change<CR>
-    nnoremap <C-p>u :Unite -no-quit -keep-focus -buffer-name=history undo<CR>
-    nnoremap <C-p>l :Unite -auto-preview -no-split -buffer-name=lines line<CR>
-    nnoremap <C-p> :Unite -no-split -buffer-name=sources source<CR>
-    nnoremap <C-S-p> :UniteResume<CR>
+    " neomru {{{
+    let g:neomru#file_mru_path = g:caches_dir . "/neomru/file"
+    let g:neomru#directory_mru_path = g:caches_dir . "/neomru/directory"
     " }}}
+
+    if(!has('nvim'))
+      " Unite {{{
+      let g:unite_data_directory = $TEMP.'/vim/unite'
+      let g:unite_enable_start_insert = 1
+      let g:unite_enable_smart_case = 1
+      let g:unite_source_rec_git_command = substitute( g:tools_basedir . '\Git\bin\git.exe', '\', '\\\\', 'g' )
+      call unite#filters#matcher_default#use(['matcher_fuzzy'])
+      call unite#custom#source('buffer,file_rec/async,file_rec,file,directory,directory_rec', 'sorters', 'sorter_rank')
+      call unite#custom#profile('files,directories,buffers,changes,history,sources', 'context.ignorecase', 1)
+      call unite#custom#profile('files,directories,buffers,changes,history,sources', 'context.smartcase', 1)
+
+      nnoremap <C-p>f :Unite -auto-preview -no-split -buffer-name=files file buffer neomru/file<CR>
+      nnoremap <C-p>d :Unite -no-split -buffer-name=directories directory<CR>
+      nnoremap <C-p>b :Unite -auto-preview -no-split -buffer-name=buffers buffer<CR>
+      nnoremap <C-p>s :Unite -winheight=100 -immediately -no-empty ultisnips<CR>
+
+      nnoremap <C-p>i :Unite -auto-preview -no-split -buffer-name=git file_rec/git<CR>
+      nnoremap <C-p> :Unite -no-split -buffer-name=sources source<CR>
+      nnoremap <C-S-p> :UniteResume<CR>
+      " }}}
+    else
+      " denite.nvim {{{
+      nnoremap <C-p>f :Denite -auto-preview -buffer-name=files file buffer file_mru<CR>
+      nnoremap <C-p>d :Denite -buffer-name=directories directory_rec directory_mru<CR>
+      nnoremap <C-p>b :Denite -auto-preview -buffer-name=buffers buffer<CR>
+
+      nnoremap <C-p>i :Denite -auto-preview --buffer-name=git file_rec/git<CR>
+      nnoremap <C-p> :Denite -buffer-name=sources source<CR>
+      " }}}
+    endif
   endif
 endif
 
@@ -349,7 +487,7 @@ endfunction
 nnoremap <Leader>hh :call ToggleHlCursorWord()<CR>
 " }}}
 
-" Make behave Y like D, C, I etc... {{{
+" Make Y behave like D, C, I etc... {{{
 nmap Y y$
 " }}}
 
@@ -379,6 +517,21 @@ fun! CloseTab() "{{{
   endif
 endfunction "}}}
 
+" fun! CloseBuf() "{{{
+  " if(&buftype == 'help')
+    " q
+  " else
+    " let currentbufnr = bufnr("%")
+    " bnext
+    " exec "bdelete " . currentbufnr
+  " endif
+" endfunction "}}}
+
+" nmap <C-t> :enew<cr>
+" map <C-F4> :call CloseBuf()<cr>
+" command! -nargs=0 CloseBuf :call CloseBuf()
+" map <C-Tab> :bnext<CR>
+" map <C-S-Tab> :bprevious<CR>
 nmap <C-t> :tabnew<cr>
 map <C-F4> :call CloseTab()<cr>
 command! -nargs=0 CloseTab :call CloseTab()
@@ -399,17 +552,17 @@ inoremap <expr> <Down> pumvisible() ? "\<Down>" : "\<C-o>gj"
 inoremap <expr> <Up> pumvisible() ? "\<Up>" : "\<C-o>gk"
 " }}}
 
-" Make it possible to move in insert mode without touching the cursor keys via <C-motion> {{{
+" Make it possible to move in insert mode without touching the cursor keys via <C-motion> (disabled) {{{
 " Do not use the cursor keys for up/down to also move if the pum is visible
 " and to move in screen lines
-inoremap <C-h> <Left>
-inoremap <C-l> <Right>
-inoremap <C-j> <C-o>gj
-inoremap <C-k> <C-o>gk
-snoremap <C-h> <Left>
-snoremap <C-l> <Right>
-snoremap <C-j> <C-o>gj
-snoremap <C-k> <C-o>gk
+" inoremap <C-h> <Left>
+" inoremap <C-l> <Right>
+" inoremap <C-j> <C-o>gj
+" inoremap <C-k> <C-o>gk
+" snoremap <C-h> <Left>
+" snoremap <C-l> <Right>
+" snoremap <C-j> <C-o>gj
+" snoremap <C-k> <C-o>gk
 " }}}
 
 " Ease window navigation, make <C-direction> behave like <C-w>direction {{{
@@ -442,7 +595,7 @@ function! ToggleShowWhitespace()
   endif
 endfunction
 
-nnoremap <Leader><Space><Space> :call ToggleShowWhitespace()<CR>
+nnoremap <Leader>tw :call ToggleShowWhitespace()<CR>
 " }}}
 
 " FileType specific omnicomplete settings {{{
@@ -454,16 +607,8 @@ augroup OmniComplete
 augroup end
 " }}}
 
-if(has("gui_running"))
-  set cursorline
-  set cursorcolumn
-else
-  set nocursorline
-  set nocursorcolumn
-endif
-
 set background=light
-colorscheme solarized
+colorscheme NeoSolarized
 filetype plugin indent on
 autocmd Filetype * if &omnifunc == "" |
       \    setlocal omnifunc=syntaxcomplete#Complete |

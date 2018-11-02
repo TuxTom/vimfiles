@@ -1,10 +1,15 @@
-try
-  set guifont=Consolas\ for\ Powerline\ FixedD:h8:cANSI
+if has('nvim')
   let g:Powerline_symbols="fancy"
-catch /^Vim(set):E596/
-  " Patched font not available, fall back to regular one
-  set guifont=Consolas:h8:cANSI
-endtry
+  Guifont! Consolas for Powerline FixedD:h8
+else
+  try
+    set guifont=Consolas\ for\ Powerline\ FixedD:h8:cANSI
+    let g:Powerline_symbols="fancy"
+  catch /^Vim(set):E596/
+    " Patched font not available, fall back to regular one
+    set guifont=Consolas:h8:cANSI
+  endtry
+endif
 
 set guicursor=a:blinkon0-block,i-ci:blinkon0-ver20,r-cr:blinkon0-hor20,o:blinkon0-hor50
 set guioptions=eM

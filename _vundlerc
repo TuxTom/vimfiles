@@ -6,20 +6,18 @@ filetype off
 execute "set rtp+=" . g:tools_basedir . '\vim\bundles\Vundle.vim'
 call vundle#begin(g:tools_basedir . '\vim\bundles')
 
-Plugin 'gmarik/Vundle.vim'
+Plugin 'VundleVim/Vundle.vim'
 
 Plugin 'CmdlineComplete'
-Plugin 'matchit.zip'
 Plugin 'tpope/vim-surround'
 Plugin 'tpope/vim-repeat'
 Plugin 'tpope/vim-fugitive'
-Plugin 'gregsexton/gitv'
-Plugin 'int3/vim-extradite'
+Plugin 'tpope/vim-vinegar'
 Plugin 'AnsiEsc.vim'
 Plugin 'thinca/vim-visualstar'
-Plugin 'nathanaelkane/vim-indent-guides'
 
-Plugin 'bling/vim-airline'
+Plugin 'vim-airline/vim-airline'
+Plugin 'vim-airline/vim-airline-themes'
 
 Plugin 'SirVer/ultisnips'
 Plugin 'jhradilek/vim-snippets', {'name': 'vim-snippets_jhradilek'}
@@ -28,28 +26,46 @@ Plugin 'honza/vim-snippets', {'name': 'vim-snippets_honza'}
 Plugin 'scrooloose/nerdcommenter'
 
 Plugin 'confluencewiki.vim'
-Plugin 'atdt/vim-mediawiki'
 
 Plugin 'Raimondi/delimitMate'
 Plugin 'Raimondi/YAIFA'
 
 Plugin 'scratch'
 
-Plugin 'Shougo/neocomplete.vim'
+if(!has('nvim'))
+  Plugin 'Shougo/neocomplete.vim'
+  Plugin 'Shougo/unite.vim'
+else
+  Plugin 'Shougo/deoplete.nvim'
+  Plugin 'Shougo/denite.nvim'
+endif
+
+Plugin 'Shougo/neco-syntax'
+Plugin 'Shougo/neco-vim'
+
+Plugin 'Shougo/neomru.vim'
 Plugin 'Shougo/vimproc.vim'
-Plugin 'Shougo/unite.vim'
 
 Plugin 'othree/xml.vim'
 
 Plugin 'PProvost/vim-ps1'
 
-Plugin 'altercation/vim-colors-solarized'
+" Plugin 'altercation/vim-colors-solarized'
+Plugin 'lifepillar/vim-solarized8'
 
 Plugin 'chrisbra/csv.vim'
 
 Plugin 'kshenoy/vim-signature'
 
 Plugin 'deris/vim-shot-f'
+
+Plugin 'chrisbra/vim-diff-enhanced'
+
+Plugin 'Konfekt/FastFold'
+
+Plugin 'GrepCommands'
+
+Plugin 'gcmt/taboo.vim'
 
 call vundle#end()
 filetype plugin indent on

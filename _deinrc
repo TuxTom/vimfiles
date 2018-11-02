@@ -1,0 +1,89 @@
+" vim: set foldmethod=marker foldlevel=0 filetype=vim:
+
+set nocompatible
+
+let g:dein_basedir = expand(g:tools_basedir . '\vim\dein')
+
+execute "set rtp+=" . g:dein_basedir . '\repos\github.com\Shougo\dein.vim'
+
+call dein#begin(g:dein_basedir)
+
+call dein#add('Shougo/dein.vim')
+
+if(!has('nvim'))
+  call dein#add('Shougo/neocomplete.vim', {
+      \ 'on_i': 1
+      \ })
+  call dein#add('Shougo/unite.vim')
+else
+  call dein#add('Shougo/deoplete.nvim', {
+      \ 'on_i': 1
+      \ })
+  call dein#add('Shougo/denite.nvim')
+endif
+
+call dein#add('Shougo/neco-syntax')
+call dein#add('Shougo/neco-vim')
+
+call dein#add('Shougo/neomru.vim')
+call dein#add('Shougo/vimproc.vim', {
+    \ 'build': 'tools\\update-dll-mingw.bat',
+    \ })
+
+call dein#add('tpope/vim-surround')
+call dein#add('tpope/vim-repeat')
+call dein#add('tpope/vim-fugitive')
+call dein#add('tpope/vim-vinegar')
+
+call dein#add('vim-scripts/CmdlineComplete')
+call dein#add('vim-scripts/AnsiEsc.vim')
+call dein#add('thinca/vim-visualstar')
+
+call dein#add('vim-airline/vim-airline')
+call dein#add('vim-airline/vim-airline-themes')
+
+call dein#add('SirVer/ultisnips')
+call dein#add('jhradilek/vim-snippets', {
+    \ 'name': 'vim-snippets_jhradilek',
+    \ })
+call dein#add('honza/vim-snippets', {
+    \ 'name': 'vim-snippets_honza',
+    \ })
+
+call dein#add('scrooloose/nerdcommenter')
+
+call dein#add('vim-scripts/confluencewiki.vim', {
+    \ 'on_ft': 'confluencewiki',
+    \ })
+
+call dein#add('Raimondi/delimitMate', {
+      \ 'on_i': 1
+      \ })
+call dein#add('Raimondi/YAIFA')
+
+call dein#add('DeaR/vim-scratch', {
+    \ 'rev': 'fix-typo',
+    \ })
+
+call dein#add('othree/xml.vim')
+
+call dein#add('PProvost/vim-ps1')
+
+call dein#add('lifepillar/vim-solarized8')
+call dein#add('iCyMind/NeoSolarized')
+
+call dein#add('chrisbra/csv.vim')
+
+call dein#add('kshenoy/vim-signature')
+
+call dein#add('deris/vim-shot-f')
+
+call dein#add('chrisbra/vim-diff-enhanced')
+
+call dein#add('Konfekt/FastFold')
+
+call dein#add('vim-scripts/GrepCommands')
+
+" call dein#add('gcmt/taboo.vim')
+
+call dein#end()
